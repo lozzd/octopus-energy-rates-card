@@ -32,12 +32,13 @@ You'll need to then configure the yaml yourself - the `type` part is filled out 
 Here's an example yaml configuration: 
 
 ```
-entity: sensor.octopus_energy_electricity_<your_id_here_current_rate
+entity: sensor.octopus_energy_electricity_<your_id_here>_current_rate
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
 showpast: false
 ```
+<your_id_here> consists of your "meter serial number" _ "meter MPAN number" it can be found in your Octopus account at https://octopus.energy/dashboard/developer/ eg. sensor.octopus_energy_electricity_12a3456789_2000001234567_current_rate
 
 Here's a breakdown of all the available configuration items:
 
