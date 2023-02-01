@@ -9,27 +9,37 @@ price every 30 minutes, for example Octopus Agile.
 
 
 #### Installation
-The easiest way to install it is via [HACS (Home Assistant Community Store)](https://github.com/hacs/frontend).
+##### HACS
+The easiest way to install it is via [HACS (Home Assistant Community Store)](https://github.com/hacs/frontend). This will ensure you get updates automatically too. 
 
-You can also install manually by copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
+In the Home Assistant UI:
+* use HACS -> Frontend -> Top Right Menu -> Custom repositories
+* Enter a repo of `lozzd/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
+* Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry. 
+* Click "Download" in the bottom right
+
+This should automatically configure all the resources, so you can now skip to **Configuration**
+
+##### Manually
+You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
 Settings -> Dashboards -> Top Right Menu -> Resources
 
 #### Configuration
-Add the card to your dashboard using **Add Card -> Manual**
+Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates Card**
 
-Using the YAML configuration, you could use an example configuration as such (ensuring you pick the name of the entity sensor that contains the rates) 
+You'll need to then configure the yaml yourself - the `type` part is filled out for you. The only required key is the name of the entity sensor that contains the rates - usually starting with `sensor.octopus_energy_electricity`.  
+
+Here's an example yaml configuration: 
 
 ```
 entity: sensor.octopus_energy_electricity_<your_id_here_current_rate
 type: custom:octopus-energy-rates-card
 cols: 2
-mediumlimit: 20
-highlimit: 30
 showday: true
 showpast: false
 ```
 
-Here's a breakdown of the available configuration items:
+Here's a breakdown of all the available configuration items:
 
 | Name        | Optional | Default       | Description                                                                                                                                          |
 |-------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
