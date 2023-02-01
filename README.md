@@ -52,7 +52,8 @@ Here's a breakdown of the available configuration items:
 * Otherwise, the row is coloured is green. 
 
 #### Screenshot
-Coming soon
+![screenshot_1](assets/screenshot_1.png)
+
 
 #### Thanks/inspiration
 This card was based on and reworked from the code [markgdev/home-assistant_OctopusAgile](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards) which is no longer maintained. 
