@@ -1,4 +1,4 @@
-class AgileRatesCard extends HTMLElement {
+class OctopusEnergyRatesCard extends HTMLElement {
     set hass(hass) {
         if (!this.content) {
             const card = document.createElement('ha-card');
@@ -219,5 +219,5 @@ class AgileRatesCard extends HTMLElement {
     }
 }
 
-customElements.define('agile-rates-card', AgileRatesCard);
+customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
 
