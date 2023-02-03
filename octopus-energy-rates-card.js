@@ -93,6 +93,13 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
         // Grab the rates which are stored as an attribute of the sensor
         var rates = attributes.rates
+        // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
+        // was chosen or there's something wrong with the integration.
+        // The rates attribute also appears to be missing after a restart for a while - please see:
+        // https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/issues/135
+        if (!rates) {
+            throw new Error("There are no rates assigned to that entity! Please check integration or chosen entity");
+        }
 
         // This is critical to breaking down the columns properly. For now, there's now
         // two loops doing the same thing which is not ideal.
