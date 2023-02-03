@@ -1,11 +1,10 @@
 # Lovelace custom card for Octopus Energy Rate display
 
-This lovelace card displays the Octpus Energy rate prices per each 30 minute slot, pulling the
+This lovelace card displays the Octopus Energy rate prices per each 30 minute slot, pulling the
 data from sensors of the the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/)
 integration.
 
-This provides a convenient, at a glance way to observe the prices on tariffs that change the
-price every 30 minutes, for example Octopus Agile.
+This provides a convenient, at a glance way to observe the prices on tariffs that change their price every 30 minutes, for example Octopus Agile.
 
 
 #### Installation
@@ -27,12 +26,18 @@ Settings -> Dashboards -> Top Right Menu -> Resources
 #### Configuration
 Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates Card**
 
-You'll need to then configure the yaml yourself - the `type` part is filled out for you. The only required key is the name of the entity sensor that contains the rates - usually starting with `sensor.octopus_energy_electricity`.  
+You'll need to then configure the yaml yourself - the `type` part is filled out for you. 
 
-Here's an example yaml configuration: 
+The only **required** key is the name of the entity sensor that contains the rates
+
+The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`
+
+(The format is `sensor.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_rate`)
+
+Here's an example yaml configuration:
 
 ```
-entity: sensor.octopus_energy_electricity_<your_id_here_current_rate
+entity: sensor.octopus_energy_electricity_<your_id_here>_current_rate
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
@@ -56,7 +61,7 @@ Here's a breakdown of all the available configuration items:
 
 #### A note on colouring
 
-* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh as blue). 
+* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue. 
 * If the price is above `highlimit`, then the row is in red
 * If the price is above `mediumlimit`, then the row is coloured orange/yellow
 * Otherwise, the row is coloured is green. 
