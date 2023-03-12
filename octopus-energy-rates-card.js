@@ -108,7 +108,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         rates.forEach(function (key) {
             const date_milli = Date.parse(key.from);
             var date = new Date(date_milli);
-            if(showpast || (date - Date.parse(new Date())>0)) {
+            if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
             }
         });
@@ -134,7 +134,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if(key.rate > mediumlimit) colour = "orange";
             else if(key.rate <= 0 ) colour = "blue";
 
-            if(showpast || (date - Date.parse(new Date())>0)) {
+            if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
                         "</td><td class='rate "+colour+"'>" + key.rate.toFixed(roundUnits) + unitstr + "</td></tr>");
                 if (x % rows_per_col == 0) {
