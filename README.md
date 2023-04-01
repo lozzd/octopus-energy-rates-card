@@ -1,5 +1,8 @@
 # Lovelace custom card for Octopus Energy Rate display
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
+
+
 This lovelace card displays the Octopus Energy rate prices per each 30 minute slot, pulling the
 data from sensors of the the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/)
 integration.
@@ -11,6 +14,10 @@ This provides a convenient, at a glance way to observe the prices on tariffs tha
 ##### HACS
 The easiest way to install it is via [HACS (Home Assistant Community Store)](https://github.com/hacs/frontend). This will ensure you get updates automatically too. 
 
+Simply click this button to go directly to the details page:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lozzd&repository=octopus-energy-rates-card&category=plugin)
+    
 In the Home Assistant UI:
 * use HACS -> Frontend -> Top Right Menu -> Custom repositories
 * Enter a repo of `lozzd/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
