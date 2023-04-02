@@ -66,6 +66,7 @@ Here's a breakdown of all the available configuration items:
 | showunits   | Y        | N/A          | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                        |
 | unitstr   | Y        | "p/kWh"          | The unit to show after the rate in the table. Set to an empty string for none.                                                                                         |
 | exportrates   | Y        | false          | Reverses the colours for use when showing export rates instead of import                                                                              |
+| hour12   | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
 
 
 
