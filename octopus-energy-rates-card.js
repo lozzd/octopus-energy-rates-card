@@ -81,6 +81,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             this.appendChild(card);
         }
 
+        const colours_import = [ 'green', 'red', 'orange', 'blue' ];
+        const colours_export = [ 'red', 'green', 'orange' ];
+
         const entityId = config.entity;
         const state = hass.states[entityId];
         const attributes = this.reverseObject(state.attributes);
@@ -92,6 +95,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const showpast = config.showpast;
         const showday = config.showday;
         const hour12 = config.hour12;
+
+        var colours = (config.exportrates ? colours_export : colours_import);
 
         // Grab the rates which are stored as an attribute of the sensor
         var rates = attributes.rates
@@ -131,10 +136,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the showday config option is set, include the shortened weekday name in the user's Locale
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
-            var colour = "green";
-            if(key.rate > highlimit) colour = "red";
-            else if(key.rate > mediumlimit) colour = "orange";
-            else if(key.rate <= 0 ) colour = "blue";
+            var colour = colours[0];
+            if(key.rate > config.highlimit) colour = colours[1];
+            else if(key.rate > config.mediumlimit) colour = colours[2];
+            else if(key.rate <= 0 ) colour = colours[3];
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
@@ -162,7 +167,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
         </table>
         `;
     }
-
 
     reverseObject(object) {
         var newObject = {};
@@ -207,6 +211,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             roundUnits: 2,
             // The unit string to show if units are shown after each rate
             unitstr: 'p/kWh',
+            // Make the colouring happen in reverse, for export rates
+            exportrates: false,
         };
 
         const cardConfig = {
