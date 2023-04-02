@@ -63,7 +63,10 @@ Here's a breakdown of all the available configuration items:
 | mediumlimit | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit   | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | roundUnits  | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
-| showunits   | Y        | true          | Controls whether the prices are printed with the unit (p/kWh)                                                                                        |
+| showunits   | Y        | N/A          | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                        |
+| unitstr   | Y        | "p/kWh"          | The unit to show after the rate in the table. Set to an empty string for none.                                                                                         |
+| exportrates   | Y        | false          | Reverses the colours for use when showing export rates instead of import                                                                              |
+
 
 
 #### A note on colouring
@@ -72,6 +75,7 @@ Here's a breakdown of all the available configuration items:
 * If the price is above `highlimit`, then the row is in red
 * If the price is above `mediumlimit`, then the row is coloured orange/yellow
 * Otherwise, the row is coloured is green. 
+* These are reversed if `exportrates` is set to `true`
 
 #### Screenshot
 ![screenshot_1](assets/screenshot_1.png)
