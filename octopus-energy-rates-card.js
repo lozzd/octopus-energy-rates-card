@@ -127,9 +127,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var table = ""
         var x = 1;
 
-        rates.forEach(function (key) {
+        rates.every(function (key) {
 			if (count !== -1 && x > count) {
-				return;
+				return false;
 			}
             const date_milli = Date.parse(key.from);
             var date = new Date(date_milli);
@@ -159,6 +159,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 x++;
             }
 
+            return true;
         });
         tables = tables.concat(table);
         tables = tables.concat("</tbody></table></td>");
