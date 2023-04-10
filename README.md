@@ -57,6 +57,7 @@ Here's a breakdown of all the available configuration items:
 |-------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | entity      | N        | N/A           | Name of the sensor that contains the rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                          |
 | cols        | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
+| count       | Y        | All           | How many rates to show                                                    |
 | showpast    | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday     | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title       | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |

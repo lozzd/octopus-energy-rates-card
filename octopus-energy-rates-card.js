@@ -95,6 +95,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const showpast = config.showpast;
         const showday = config.showday;
         const hour12 = config.hour12;
+		const count = config.count || -1;
 
         var colours = (config.exportrates ? colours_export : colours_import);
 
@@ -115,7 +116,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         rates.forEach(function (key) {
             const date_milli = Date.parse(key.from);
             var date = new Date(date_milli);
-            if(showpast || (date - Date.parse(new Date())>-1800000)) {
+            if((count !== -1 && rates_list_length < count) && (showpast || (date - Date.parse(new Date())>-1800000))) {
                 rates_list_length++;
             }
         });
@@ -127,6 +128,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var x = 1;
 
         rates.forEach(function (key) {
+			if (count !== -1 && x > count) {
+				return;
+			}
             const date_milli = Date.parse(key.from);
             var date = new Date(date_milli);
             const lang = navigator.language || navigator.languages[0];
