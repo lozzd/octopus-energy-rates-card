@@ -3,7 +3,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const config = this._config;
         if (!this.content) {
             const card = document.createElement('ha-card');
-            card.header = this.title;
+            card.header = config.title;
             this.content = document.createElement('div');
             this.content.style.padding = '0 16px 16px';
 
