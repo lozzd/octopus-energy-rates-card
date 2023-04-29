@@ -67,6 +67,7 @@ Here's a breakdown of all the available configuration items:
 | unitstr   | Y        | "p/kWh"          | The unit to show after the rate in the table. Set to an empty string for none.                                                                                         |
 | exportrates   | Y        | false          | Reverses the colours for use when showing export rates instead of import                                                                              |
 | hour12   | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
+| cheapest   | Y        | false          | Highlight the cheapest rate (black text on lighter green background)                                                                            |
 
 
 
