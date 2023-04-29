@@ -81,7 +81,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             this.appendChild(card);
         }
 
-        const colours_import = [ 'green', 'red', 'orange', 'blue' ];
+        const colours_import = [ 'green', 'red', 'orange', 'blue', 'purple' ];
         const colours_export = [ 'red', 'green', 'orange' ];
 
         const entityId = config.entity;
@@ -95,6 +95,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const showpast = config.showpast;
         const showday = config.showday;
         const hour12 = config.hour12;
+        const cheapest = config.cheapest;
 
         var colours = (config.exportrates ? colours_export : colours_import);
 
@@ -112,11 +113,15 @@ class OctopusEnergyRatesCard extends HTMLElement {
         // two loops doing the same thing which is not ideal.
         // TODO: there should be one clear data process loop and one rendering loop? Or a function?
         var rates_list_length = 0;
+        var cheapest_rate = 5000;
         rates.forEach(function (key) {
             const date_milli = Date.parse(key.from);
             var date = new Date(date_milli);
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
+            }
+            if (key.rate < lowest_rate) {
+                cheapest_rate = key.rate;
             }
         });
         const rows_per_col = Math.ceil(rates_list_length / config.cols);
@@ -137,7 +142,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
-            if(key.rate > config.highlimit) colour = colours[1];
+            if (cheapest && key.rate = cheapest_rate) colour = colours[4];
+            else if(key.rate > config.highlimit) colour = colours[1];
             else if(key.rate > config.mediumlimit) colour = colours[2];
             else if(key.rate <= 0 ) colour = colours[3];
 
@@ -213,6 +219,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             unitstr: 'p/kWh',
             // Make the colouring happen in reverse, for export rates
             exportrates: false,
+            // Colour the cheapest rate in purple
+            cheapest: false
         };
 
         const cardConfig = {
