@@ -120,7 +120,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
             }
-            if (key.rate < lowest_rate) {
+            if (key.rate < cheapest_rate) {
                 cheapest_rate = key.rate;
             }
         });
@@ -142,7 +142,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
-            if (cheapest && key.rate = cheapest_rate) colour = colours[4];
+            if (cheapest && (key.rate = cheapest_rate)) colour = colours[4];
             else if(key.rate > config.highlimit) colour = colours[1];
             else if(key.rate > config.mediumlimit) colour = colours[2];
             else if(key.rate <= 0 ) colour = colours[3];
