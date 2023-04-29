@@ -75,13 +75,18 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
             }
+            td.cheapest {
+                color: black;
+                border: 2px solid lime;
+                background-color: lime;
+            }
             `;
             card.appendChild(style);
             card.appendChild(this.content);
             this.appendChild(card);
         }
 
-        const colours_import = [ 'green', 'red', 'orange', 'blue', 'purple' ];
+        const colours_import = [ 'green', 'red', 'orange', 'blue', 'cheapest' ];
         const colours_export = [ 'red', 'green', 'orange' ];
 
         const entityId = config.entity;
@@ -119,9 +124,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date = new Date(date_milli);
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
-            }
-            if (key.rate < cheapest_rate) {
-                cheapest_rate = key.rate;
+                if (key.rate < cheapest_rate) cheapest_rate = key.rate;
             }
         });
         const rows_per_col = Math.ceil(rates_list_length / config.cols);
@@ -142,7 +145,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
-            if (cheapest && (key.rate = cheapest_rate)) colour = colours[4];
+            if (cheapest && (key.rate == cheapest_rate)) colour = colours[4];
             else if(key.rate > config.highlimit) colour = colours[1];
             else if(key.rate > config.mediumlimit) colour = colours[2];
             else if(key.rate <= 0 ) colour = colours[3];
@@ -219,7 +222,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             unitstr: 'p/kWh',
             // Make the colouring happen in reverse, for export rates
             exportrates: false,
-            // Colour the cheapest rate in purple
+            // Higlioght the cheapest rate
             cheapest: false
         };
 
