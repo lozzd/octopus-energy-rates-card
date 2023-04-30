@@ -77,8 +77,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             td.cheapest {
                 color: black;
-                border: 2px solid lime;
-                background-color: lime;
+                border: 2px solid LightGreen;
+                background-color: LightGreen;
             }
             `;
             card.appendChild(style);
