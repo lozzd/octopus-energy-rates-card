@@ -105,7 +105,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var colours = (config.exportrates ? colours_export : colours_import);
 
         // Grab the rates which are stored as an attribute of the sensor
-        var rates = attributes.rates
+        var rates = attributes.all_rates
         // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
         // was chosen or there's something wrong with the integration.
         // The rates attribute also appears to be missing after a restart for a while - please see:
@@ -120,11 +120,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var rates_list_length = 0;
         var cheapest_rate = 5000;
         rates.forEach(function (key) {
-            const date_milli = Date.parse(key.from);
+            const date_milli = Date.parse(key.valid_from);
             var date = new Date(date_milli);
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
-                if (key.rate < cheapest_rate) cheapest_rate = key.rate;
+                if (key.value_inc_vat < cheapest_rate) cheapest_rate = key.value_inc_vat;
             }
         });
         const rows_per_col = Math.ceil(rates_list_length / config.cols);
@@ -135,7 +135,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var x = 1;
 
         rates.forEach(function (key) {
-            const date_milli = Date.parse(key.from);
+            const date_milli = Date.parse(key.valid_from);
             var date = new Date(date_milli);
             const lang = navigator.language || navigator.languages[0];
             var options = {hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute:'2-digit'};
@@ -145,14 +145,14 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
-            if (cheapest && (key.rate == cheapest_rate)) colour = colours[4];
-            else if(key.rate > config.highlimit) colour = colours[1];
-            else if(key.rate > config.mediumlimit) colour = colours[2];
-            else if(key.rate <= 0 ) colour = colours[3];
+            if (cheapest && (key.value_inc_vat == cheapest_rate)) colour = colours[4];
+            else if(key.value_inc_vat > config.highlimit) colour = colours[1];
+            else if(key.value_inc_vat > config.mediumlimit) colour = colours[2];
+            else if(key.value_inc_vat <= 0 ) colour = colours[3];
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
-                        "</td><td class='rate "+colour+"'>" + key.rate.toFixed(roundUnits) + unitstr + "</td></tr>");
+                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + "</td></tr>");
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
                     table = "";
