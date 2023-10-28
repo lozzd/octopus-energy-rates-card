@@ -155,13 +155,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
             if (key.hasOwnProperty("state")) {
                 state = key.state
             }
+            if (state == '') {
+                state = '&nbsp;'
+            }
+
             if (state == 'Charge') {
                 colour_state = 'green'
             }
-            if (state == 'Discharge') {
+            else if (state == 'Discharge') {
                 colour_state = 'red'
             }
-            if (state == 'Freeze') {
+            else if (state == 'Freeze') {
                 colour_state = 'grey'
             }
 
