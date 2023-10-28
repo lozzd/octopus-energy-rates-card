@@ -32,7 +32,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             tr.rate_row{
                 text-align:center;
-                width:80px;
+                width:100px;
             }
             td.time {
                 text-align:center;
@@ -50,17 +50,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.time_blue{
                 border-bottom: 1px solid #391CD9;
             }
-            td.time_grey{
-                border-bottom: 1px solid #AAAAAA;
-            }
-            td.time_white{
-                border-bottom: 1px solid #FFFFFF;
-            }
             td.rate {
                 color:white;
                 text-align:center;
                 vertical-align: middle;
-                width:80px;
+                width:100px;
 
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
@@ -80,6 +74,14 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.blue {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
+            }
+            td.white {
+                border: 2px solid #FFFFFF;
+                background-color: #FFFFFF;
+            }
+            td.grey {
+                border: 2px solid #AAAAAA;
+                background-color: #AAAAAA;
             }
             `;
             card.appendChild(style);
@@ -165,7 +167,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
-                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + "</td><td class='time time_"+colour_state+"'>" + state + "</td></tr>");
+                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + "</td><td class='rate "+colour_state+"'>" + state + "</td></tr>");
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
                     table = "";
