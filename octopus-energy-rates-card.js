@@ -50,6 +50,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.time_blue{
                 border-bottom: 1px solid #391CD9;
             }
+            td.time_grey{
+                border-bottom: 1px solid #AAAAAA;
+            }
+            td.time_white{
+                border-bottom: 1px solid #FFFFFF;
+            }
             td.rate {
                 color:white;
                 text-align:center;
@@ -83,6 +89,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
         const colours_import = [ 'green', 'red', 'orange', 'blue' ];
         const colours_export = [ 'red', 'green', 'orange' ];
+        const colours_state  = [ 'white', 'green', 'red', 'grey']
 
         const entityId = config.entity;
         const state = hass.states[entityId];
@@ -137,6 +144,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
+            var colour_state = colours_state[0]
             if(key.value_inc_vat > config.highlimit) colour = colours[1];
             else if(key.value_inc_vat > config.mediumlimit) colour = colours[2];
             else if(key.value_inc_vat <= 0 ) colour = colours[3];
@@ -145,10 +153,19 @@ class OctopusEnergyRatesCard extends HTMLElement {
             if (key.hasOwnProperty("state")) {
                 state = key.state
             }
+            if (state == 'Charge') {
+                colour_state = 'green'
+            }
+            if (state == 'Discharge') {
+                colour_state = 'red'
+            }
+            if (state == 'Freeze') {
+                colour_state = 'grey'
+            }
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
-                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + state + "x </td></tr>");
+                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + "</td><td class='time time_"+colour_state+"'>" + state + "</td></tr>");
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
                     table = "";
@@ -243,5 +260,5 @@ window.customCards.push({
   type: 'octopus-energy-rates-card',
   name: 'Octopus Energy Rates Card',
   preview: false,
-  description: 'This card displays the energy rates for Octopus Energy',
+  description: 'This card displays the energy rates for Octopus Energy, with Predbat information if enabled',
 });
