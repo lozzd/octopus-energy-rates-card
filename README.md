@@ -1,4 +1,4 @@
-# Lovelace custom card for Octopus Energy Rate display
+# Lovelace custom card for Octopus Energy Rate display (Predbat version, forked)
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
@@ -20,7 +20,7 @@ Simply click this button to go directly to the details page:
     
 In the Home Assistant UI:
 * use HACS -> Frontend -> Top Right Menu -> Custom repositories
-* Enter a repo of `lozzd/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
+* Enter a repo of `springfall2008/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
 * Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry. 
 * Click "Download" in the bottom right
 
