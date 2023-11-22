@@ -42,14 +42,14 @@ The only **required** key is the name of the entity sensor that contains the rat
 
 The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_day_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`
 
-(The format is `event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rate`)
+(The format is `event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-If you want to see tomorrow's rate use a second card with event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_next_day_rate.
+If you want to see tomorrow's rate use a second card with event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_next_day_rates.
 
 Here's an example yaml configuration:
 
 ```
-entity: event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rate
+entity: event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
