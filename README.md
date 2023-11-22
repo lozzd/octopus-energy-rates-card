@@ -40,14 +40,16 @@ You'll need to then configure the yaml yourself - the `type` part is filled out 
 
 The only **required** key is the name of the entity sensor that contains the rates
 
-The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`
+The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_day_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`
 
-(The format is `sensor.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_rate`)
+(The format is `event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rate`)
+
+If you want to see tomorrow's rate use a second card with event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_next_day_rate.
 
 Here's an example yaml configuration:
 
 ```
-entity: sensor.octopus_energy_electricity_<your_id_here>_current_rate
+entity: event.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rate
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
