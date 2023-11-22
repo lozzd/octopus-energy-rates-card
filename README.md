@@ -31,6 +31,9 @@ You can also install manually by downloading/copying the Javascript file in to `
 Settings -> Dashboards -> Top Right Menu -> Resources
 
 #### Configuration
+This version of the card requires at least v9.0.0 of https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy.
+
+
 Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates Card**
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you. 
@@ -60,11 +63,11 @@ Here's a breakdown of all the available configuration items:
 | showpast    | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday     | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title       | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
-| mediumlimit | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
-| highlimit   | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
-| roundUnits  | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
+| mediumlimit | Y        | 0.20 (£)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
+| highlimit   | Y        | 0.30 (£)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
+| roundUnits  | Y        | 3             | Controls how many decimal places to round the rates to                                                                                               |
 | showunits   | Y        | N/A          | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                        |
-| unitstr   | Y        | "p/kWh"          | The unit to show after the rate in the table. Set to an empty string for none.                                                                                         |
+| unitstr   | Y        | "£/kWh"          | The unit to show after the rate in the table. Set to an empty string for none.                                                                                         |
 | exportrates   | Y        | false          | Reverses the colours for use when showing export rates instead of import                                                                              |
 | hour12   | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
 

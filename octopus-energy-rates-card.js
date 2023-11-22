@@ -99,7 +99,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var colours = (config.exportrates ? colours_export : colours_import);
 
         // Grab the rates which are stored as an attribute of the sensor
-        var rates = attributes.all_rates
+        var rates = attributes.rates
         // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
         // was chosen or there's something wrong with the integration.
         // The rates attribute also appears to be missing after a restart for a while - please see:
@@ -113,7 +113,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         // TODO: there should be one clear data process loop and one rendering loop? Or a function?
         var rates_list_length = 0;
         rates.forEach(function (key) {
-            const date_milli = Date.parse(key.valid_from);
+            const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 rates_list_length++;
@@ -127,7 +127,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var x = 1;
 
         rates.forEach(function (key) {
-            const date_milli = Date.parse(key.valid_from);
+            const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
             const lang = navigator.language || navigator.languages[0];
             var options = {hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute:'2-digit'};
@@ -205,12 +205,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the price is above mediumlimit, the row is marked yellow.
             // If the price is below mediumlimit, the row is marked green.
             // If the price is below 0, the row is marked blue.
-            mediumlimit: 20,
-            highlimit: 30,
+            mediumlimit: 0.20,
+            highlimit: 0.30,
             // Controls the rounding of the units of the rate
-            roundUnits: 2,
+            roundUnits: 3,
             // The unit string to show if units are shown after each rate
-            unitstr: 'p/kWh',
+            unitstr: '£/kWh',
             // Make the colouring happen in reverse, for export rates
             exportrates: false,
         };
