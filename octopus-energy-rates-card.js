@@ -324,7 +324,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
     }
 }
 
-customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCardMv2);
+customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
 // Configure the preview in the Lovelace card picker
 window.customCards = window.customCards || [];
 window.customCards.push({
