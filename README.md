@@ -35,13 +35,15 @@ Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates 
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you. 
 
-The only **required** key is the name of the entity sensor that contains the rates
+The only **required** key is the name of the entity sensor that contains the rates. At least one of the "current", "previous" or "next" day rate entities will need to be selected. 
+
+As of version 9.0.0 of the Octopus Energy integration, these entities are now called `events` and not enabled by default. In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
 
 The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`
 
-(The format is `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
+(The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-Here's an example yaml configuration:
+Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above. 
 
 ```
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
