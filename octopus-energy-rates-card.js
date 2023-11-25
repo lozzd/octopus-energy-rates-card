@@ -50,6 +50,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.time_blue{
                 border-bottom: 1px solid #391CD9;
             }
+            td.time_cheapest{
+                border-bottom: 1px solid LightGreen;
+            }
+            td.time_cheapestblue{
+                border-bottom: 1px solid LightBlue;
+            }
             td.rate {
                 color:white;
                 text-align:center;
@@ -75,19 +81,28 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
             }
+            td.cheapest {
+                color: black;
+                border: 2px solid LightGreen;
+                background-color: LightGreen;
+            }
+            td.cheapestblue {
+                color: black;
+                border: 2px solid LightBlue;
+                background-color: LightBlue;
+            }
             `;
             card.appendChild(style);
             card.appendChild(this.content);
             this.appendChild(card);
         }
 
-        const colours_import = [ 'green', 'red', 'orange', 'blue' ];
+        const colours_import = ['green', 'red', 'orange', 'blue', 'cheapest', 'cheapestblue'];
         const colours_export = [ 'red', 'green', 'orange' ];
 
-        const entityId = config.entity;
-        const state = hass.states[entityId];
-        const attributes = this.reverseObject(state.attributes);
-        const stateStr = state ? state.state : 'unavailable';
+        const currentEntityId = config.currentEntity;
+        const futureEntityId = config.futureEntity;
+        const pastEntityId = config.pastEntity;
         const mediumlimit = config.mediumlimit;
         const highlimit = config.highlimit;
         const unitstr = config.unitstr;
@@ -95,30 +110,109 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const showpast = config.showpast;
         const showday = config.showday;
         const hour12 = config.hour12;
-
+        const cheapest = config.cheapest;
+        const combinerate = config.combinerate;
+        const multiplier = config.multiplier
         var colours = (config.exportrates ? colours_export : colours_import);
-
+        var rates_totalnumber = 0;
+        var combinedRates = [];
+        
         // Grab the rates which are stored as an attribute of the sensor
-        var rates = attributes.all_rates
+        const paststate = hass.states[pastEntityId];
+        const currentstate = hass.states[currentEntityId];
+        const futurestate = hass.states[futureEntityId];
+        
+        // Combine the data sources
+        if (typeof(paststate) != 'undefined' && paststate != null)
+        {
+            const pastattributes = this.reverseObject(paststate.attributes);
+            var ratesPast = pastattributes.rates;
+
+            ratesPast.forEach(function (key) {
+                combinedRates.push(key);
+                rates_totalnumber ++;
+            });
+        }
+
+        if (typeof(currentstate) != 'undefined' && currentstate != null)
+        {
+            const currentattributes = this.reverseObject(currentstate.attributes);
+            var ratesCurrent = currentattributes.rates;
+    
+            ratesCurrent.forEach(function (key) {
+                combinedRates.push(key);
+                rates_totalnumber ++;
+            });
+        }
         // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
         // was chosen or there's something wrong with the integration.
         // The rates attribute also appears to be missing after a restart for a while - please see:
         // https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/issues/135
-        if (!rates) {
+        if (!ratesCurrent) {
             throw new Error("There are no rates assigned to that entity! Please check integration or chosen entity");
         }
-
+        
+        if (typeof(futurestate) != 'undefined' && futurestate != null)
+        {
+            const futureattributes = this.reverseObject(futurestate.attributes);
+            var ratesFuture = futureattributes.rates;
+        
+            ratesFuture.forEach(function (key) {
+                combinedRates.push(key);
+                rates_totalnumber ++;
+            });
+        }
+        
         // This is critical to breaking down the columns properly. For now, there's now
         // two loops doing the same thing which is not ideal.
         // TODO: there should be one clear data process loop and one rendering loop? Or a function?
         var rates_list_length = 0;
-        rates.forEach(function (key) {
-            const date_milli = Date.parse(key.valid_from);
+        var cheapest_rate = 5000;
+        var previous_rate = 0;
+        
+        var rates_currentNumber = 0;
+        var previous_rates_day = "";
+        var rates_processingRow = 0;
+        var filteredRates = [];
+
+        // filter out rates to display
+        combinedRates.forEach(function (key) {
+            const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
-            if(showpast || (date - Date.parse(new Date())>-1800000)) {
-                rates_list_length++;
+            const lang = navigator.language || navigator.languages[0];
+            var current_rates_day = date.toLocaleDateString(lang, { weekday: 'short' });
+            rates_processingRow ++;
+            var ratesToEvaluate = key.value_inc_vat * multiplier;
+
+            if(showpast || (date - Date.parse(new Date())>-1800000)) 
+            {
+                rates_currentNumber++;
+                
+                // Find the cheapest rate that hasn't past yet
+                if ((ratesToEvaluate < cheapest_rate) && (date - Date.parse(new Date())>-1800000)) cheapest_rate = ratesToEvaluate;
+                
+                // If we don't want to combine same values rates then just push them to new display array
+                if (!combinerate){
+                    filteredRates.push(key);
+                    rates_list_length++;
+                }
+
+                if (combinerate && 
+                        (
+                        (rates_currentNumber == 1)
+                        || (current_rates_day != previous_rates_day) 
+                        || (previous_rate != ratesToEvaluate)
+                        )
+                    )
+                {
+                        filteredRates.push(key);
+                        rates_list_length++;
+                }
+                previous_rate = ratesToEvaluate;
+                previous_rates_day = current_rates_day;
             }
         });
+
         const rows_per_col = Math.ceil(rates_list_length / config.cols);
 
         var tables = "";
@@ -126,8 +220,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var table = ""
         var x = 1;
 
-        rates.forEach(function (key) {
-            const date_milli = Date.parse(key.valid_from);
+        filteredRates.forEach(function (key) {
+            const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
             const lang = navigator.language || navigator.languages[0];
             var options = {hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute:'2-digit'};
@@ -137,13 +231,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
-            if(key.value_inc_vat > config.highlimit) colour = colours[1];
-            else if(key.value_inc_vat > config.mediumlimit) colour = colours[2];
-            else if(key.value_inc_vat <= 0 ) colour = colours[3];
+            var valueToDisplay = key.value_inc_vat * multiplier;
+            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[4];
+            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[5];
+            else if (valueToDisplay > highlimit) colour = colours[1];
+            else if (valueToDisplay > mediumlimit) colour = colours[2];
+            else if (valueToDisplay <= 0) colour = colours[3];
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
-                        "</td><td class='rate "+colour+"'>" + key.value_inc_vat.toFixed(roundUnits) + unitstr + "</td></tr>");
+                        "</td><td class='rate "+colour+"'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
                     table = "";
@@ -152,9 +250,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
                         tables = tables.concat("<td><table class='sub_table'><tbody>");
                     }
                 };
-                x++;
+            x++;
             }
-
         });
         tables = tables.concat(table);
         tables = tables.concat("</tbody></table></td>");
@@ -185,7 +282,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
     }
 
     setConfig(config) {
-        if (!config.entity) {
+        if (!config.currentEntity) {
             throw new Error('You need to define an entity');
         }
 
@@ -213,6 +310,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
             unitstr: 'p/kWh',
             // Make the colouring happen in reverse, for export rates
             exportrates: false,
+            // Higlight the cheapest rate
+            cheapest: false,
+            // Combine equal rates
+            combinerate: false,
+            // multiple rate values for pence (100) or pounds (1)
+            multiplier: 100
         };
 
         const cardConfig = {
@@ -221,7 +324,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
         };
 
         this._config = cardConfig;
-
     }
 
     // The height of your card. Home Assistant uses this to automatically
@@ -235,8 +337,8 @@ customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
 // Configure the preview in the Lovelace card picker
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: 'octopus-energy-rates-card',
-  name: 'Octopus Energy Rates Card',
-  preview: false,
-  description: 'This card displays the energy rates for Octopus Energy',
+    type: 'octopus-energy-rates-card',
+    name: 'Octopus Energy Rates Card',
+    preview: false,
+    description: 'This card displays the energy rates for Octopus Energy',
 });

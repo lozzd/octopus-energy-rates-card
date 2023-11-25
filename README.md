@@ -31,16 +31,21 @@ Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates 
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you. 
 
-The only **required** key is the name of the entity sensor that contains the rates.
+
+The only **required** key is the name of the entity sensor that contains the rates. At least one of the "current", "previous" or "next" day rate entities will need to be selected. 
+
+As of version 9.0.0 of the Octopus Energy integration, these entities are now called `events` and not enabled by default. In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
 
 The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`.
 
-(The format is `sensor.octopus_energy_electricity_{{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_rate`)
+(The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-Here's an example yaml configuration:
+Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above. 
 
 ```
-entity: sensor.octopus_energy_electricity_<your_id_here>_current_rate
+currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
+pastEntity: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
+futureEntity: event.octopus_energy_electricity_<your_id_here>_next_day_rates
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
@@ -49,20 +54,27 @@ showpast: false
 
 Here's a breakdown of all the available configuration items:
 
-| Name        | Optional | Default       | Description                                                                                                                                          |
-|-------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| entity      | N        | N/A           | Name of the sensor that contains the rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                          |
-| cols        | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
-| showpast    | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
-| showday     | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
-| title       | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
-| mediumlimit | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
-| highlimit   | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
-| roundUnits  | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
-| showunits   | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                             |
-| unitstr     | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                       |
-| exportrates | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
-| hour12      | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
+| Name          | Optional | Default       | Description                                                                                                                                          |
+|---------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
+| pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
+| futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
+| cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
+| showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
+| showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
+| title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
+| mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
+| highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
+| roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
+| showunits     | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                             |
+| unitstr       | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                       |
+| exportrates   | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
+| hour12        | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
+| cheapest      | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                           |
+| combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                        |
+| multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
+
+
 
 #### A note on colouring
 
