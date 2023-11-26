@@ -65,6 +65,7 @@ Here's a breakdown of all the available configuration items:
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
+| lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
@@ -80,14 +81,18 @@ Here's a breakdown of all the available configuration items:
 
 #### A note on colouring
 
-* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue
-* If the price is above `highlimit`, then the row is in red
-* If the price is above `mediumlimit`, then the row is coloured orange/yellow
-* Otherwise, the row is coloured is green.
-* These are reversed if `exportrates` is set to `true`
+* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue. 
+* If the price is above `highLimit`, then the row is in red
+* If the price is above `mediumLimit`, then the row is coloured orange
+* if the price is above `lowLimit`, then the row is coloured dark green
+* if the price is below 'lowLimit', then the row is coloured green
+* These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
+* Cheapes rate is coloured in light green / light blue
+* If Target Rate entity is included in the config, the target hours will be highlited in Navy Blue
 
-#### Screenshot
-![screenshot_1](assets/screenshot_1.png)
+#### Screenshots
+![screenshot_1](assets/import.png)
+![screenshot_2](assets/export.png)
 
 Import rates with the Target Rates entity specified:
 
