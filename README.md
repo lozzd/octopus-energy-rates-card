@@ -46,6 +46,7 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 pastEntity: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
 futureEntity: event.octopus_energy_electricity_<your_id_here>_next_day_rates
+targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
 type: custom:octopus-energy-rates-card
 cols: 2
 showday: true
@@ -59,6 +60,7 @@ Here's a breakdown of all the available configuration items:
 | currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
+| targetTimesEntity  | Y        | N/A           | Name of the sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
@@ -86,6 +88,12 @@ Here's a breakdown of all the available configuration items:
 
 #### Screenshot
 ![screenshot_1](assets/screenshot_1.png)
+
+Import rates with the Target Rates entity specified:
+
+![screenshot_3](assets/import_with_target.png)
+
+
 
 #### Thanks/inspiration
 This card was based on and reworked from the code [markgdev/home-assistant_OctopusAgile](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards) which is no longer maintained. 
