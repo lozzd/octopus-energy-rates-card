@@ -65,6 +65,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
             }
+            td.rate_emphasis {
+                color:black;
+				font-weight: bold;
+				
+                text-align:center;
+                vertical-align: middle;
+                width:80px;
+
+                border-top-right-radius:15px;
+                border-bottom-right-radius:15px;
+            }
             td.red {
                 border: 2px solid Tomato;
                 background-color: Tomato;
@@ -103,6 +114,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const currentEntityId = config.currentEntity;
         const futureEntityId = config.futureEntity;
         const pastEntityId = config.pastEntity;
+        const emphasisEntityId = config.emphasisEntity;
         const mediumlimit = config.mediumlimit;
         const highlimit = config.highlimit;
         const unitstr = config.unitstr;
@@ -144,6 +156,14 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 rates_totalnumber ++;
             });
         }
+
+		const emphasisEntitystate = hass.states[emphasisEntityId];
+		var emphasislimit = 5000;
+        if (typeof(emphasisEntitystate) != 'undefined' && emphasisEntitystate != null) {
+		    emphasislimit = parseFloat(emphasisEntitystate.state);
+		} else {
+		}
+
         // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
         // was chosen or there's something wrong with the integration.
         // The rates attribute also appears to be missing after a restart for a while - please see:
@@ -239,8 +259,16 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay <= 0) colour = colours[3];
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
-                        "</td><td class='rate "+colour+"'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+                table = table.concat("<tr class='rate_row'>");
+
+				var emphasis = ""
+				if((emphasislimit != 5000) && (key.value_inc_vat < emphasislimit)) {
+					// format of emphass row
+					emphasis = "_emphasis";
+				}
+				table = table.concat("<td class='time time_"+colour+"'>" + date_locale + time_locale + 
+						"</td><td class='rate" + emphasis + " " + colour+"'>" + valueToDisplay.toFixed(roundUnits) + unitstr);
+				table = table.concat("</td></tr>");
 
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
