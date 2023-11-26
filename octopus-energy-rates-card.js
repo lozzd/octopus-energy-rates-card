@@ -21,6 +21,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             table.main {
                 padding: 0px;
             }
+            td.time_highlight {
+                font-weight: bold;
+                background-color: Navy;
+            }
             thead th {
                 text-align: left;
                 padding: 0px;
@@ -103,6 +107,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const currentEntityId = config.currentEntity;
         const futureEntityId = config.futureEntity;
         const pastEntityId = config.pastEntity;
+        // Read the targetTimes entity if specified
+        const targetTimesId = config.targetTimesEntity;
+        const targetTimesstate = hass.states[targetTimesId];
+        const targetTimesttributes = targetTimesstate ? this.reverseObject(targetTimesstate.attributes) : {};
+       
         const mediumlimit = config.mediumlimit;
         const highlimit = config.highlimit;
         const unitstr = config.unitstr;
@@ -116,6 +125,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var colours = (config.exportrates ? colours_export : colours_import);
         var rates_totalnumber = 0;
         var combinedRates = [];
+        // Check if slotsTargetTimes is available before using forEach
+        const slotsTargetTimes = targetTimesttributes.target_times || [];
         
         // Grab the rates which are stored as an attribute of the sensor
         const paststate = hass.states[pastEntityId];
@@ -231,7 +242,20 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
             var colour = colours[0];
+            var isTargetTime = false;
+            // Check if the current time row corresponds to a target time
+            slotsTargetTimes.forEach(function (targetTime) {
+                const startTime = new Date(targetTime.start);
+                const endTime = new Date(targetTime.end);
+                if (date >= startTime && date < endTime) {
+                    isTargetTime = true;
+                }
+            });
+
+            
             var valueToDisplay = key.value_inc_vat * multiplier;
+            // Apply bold styling if the current time is a target time
+            var boldStyle = isTargetTime ? 'time_highlight' : '';
             if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[4];
             else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[5];
             else if (valueToDisplay > highlimit) colour = colours[1];
@@ -239,7 +263,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay <= 0) colour = colours[3];
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
+                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_"+colour+"'>" + date_locale + time_locale +
                         "</td><td class='rate "+colour+"'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
 
                 if (x % rows_per_col == 0) {
@@ -287,6 +311,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         }
 
         const defaultConfig = {
+            // Entities to get data from
+            targetTimesEntity: null,
             // Controls how many columns the rates split in to
             cols: 1,
             // Show rates that already happened in the card
