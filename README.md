@@ -40,19 +40,15 @@ The easiest way to find that entity name is by opening the Search within Home As
 
 (The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-Example configs: - obviously replacing `<your_id_here>` with your data from above. 
-
-Here's an example yaml configuration for import rates:
+Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
 
 ```
 type: custom:octopus-energy-rates-card
-pastEntity: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-futureEntity: event.octopus_energy_electricity_<your_id_here>_next_day_rates
 targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
-cols: 3
+cols: 2
 hour12: false
-showday: false
+showday: true
 showpast: false
 title: Octopus Import
 unitstr: p
@@ -117,9 +113,9 @@ Here's a breakdown of all the available configuration items:
 * If the price is above `highLimit`, then the row is in red
 * If the price is above `mediumLimit`, then the row is coloured orange
 * if the price is above `lowLimit`, then the row is coloured dark green
-* if the price is below 'lowLimit', then the row is coloured green
+* if the price is below `lowLimit`, then the row is coloured green
 * These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
-* Cheapes rate is coloured in light green / light blue
+* Cheapest rate is coloured in light green (above 0) / light blue (below 0)
 * If Target Rate entity is included in the config, the target hours will be highlited in Navy Blue
 
 #### Screenshots
