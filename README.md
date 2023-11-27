@@ -45,7 +45,6 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 ```
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
 cols: 2
 hour12: false
 showday: true
@@ -122,8 +121,26 @@ Here's a breakdown of all the available configuration items:
 ![screenshot_1](assets/import.png)
 ![screenshot_2](assets/export.png)
 
-Import rates with the Target Rates entity specified:
+##### Advanced Configurations
 
+Import rates with the Target Rates and future rates entities specified:
+```
+type: custom:octopus-energy-rates-card
+currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
+cols: 3
+hour12: false
+showday: false
+showpast: false
+title: Octopus Import - p/kWh
+unitstr: ''
+lowlimit: 6
+mediumlimit: 15
+highlimit: 27
+cheapest: true
+multiplier: 100
+```
 ![screenshot_3](assets/import_with_target.png)
 
 
