@@ -21,6 +21,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             table.main {
                 padding: 0px;
             }
+            td.time_highlight {
+                font-weight: bold;
+                background-color: Navy;
+            }
             thead th {
                 text-align: left;
                 padding: 0px;
@@ -46,6 +50,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             td.time_green{
                 border-bottom: 1px solid MediumSeaGreen;
+            }
+            td.time_lightgreen {
+                border-bottom: 1px solid ForestGreen;
             }
             td.time_blue{
                 border-bottom: 1px solid #391CD9;
@@ -77,6 +84,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border: 2px solid MediumSeaGreen;
                 background-color: MediumSeaGreen;
             }
+            td.lightgreen {
+                border: 2px solid ForestGreen;
+                background-color: ForestGreen;
+            }
             td.blue {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
@@ -97,12 +108,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
             this.appendChild(card);
         }
 
-        const colours_import = ['green', 'red', 'orange', 'blue', 'cheapest', 'cheapestblue'];
-        const colours_export = [ 'red', 'green', 'orange' ];
-
+        const colours_import = ['lightgreen', 'green', 'orange', 'red', 'blue', 'cheapest', 'cheapestblue'];
+        const colours_export = [ 'red', 'green', 'orange', 'green' ];
         const currentEntityId = config.currentEntity;
         const futureEntityId = config.futureEntity;
         const pastEntityId = config.pastEntity;
+        // Read the targetTimes entity if specified
+        const targetTimesId = config.targetTimesEntity;
+        const targetTimesstate = hass.states[targetTimesId];
+        const targetTimesttributes = targetTimesstate ? this.reverseObject(targetTimesstate.attributes) : {};
+       
+        const lowlimit = config.lowlimit;
         const mediumlimit = config.mediumlimit;
         const highlimit = config.highlimit;
         const unitstr = config.unitstr;
@@ -116,6 +132,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var colours = (config.exportrates ? colours_export : colours_import);
         var rates_totalnumber = 0;
         var combinedRates = [];
+        // Check if slotsTargetTimes is available before using forEach
+        const slotsTargetTimes = targetTimesttributes.target_times || [];
         
         // Grab the rates which are stored as an attribute of the sensor
         const paststate = hass.states[pastEntityId];
@@ -230,16 +248,30 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the showday config option is set, include the shortened weekday name in the user's Locale
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
-            var colour = colours[0];
+            var colour = colours[1];  // Default to 'green' (index 1) (below low limit above 0)
+            var isTargetTime = false;
+            // Check if the current time row corresponds to a target time
+            slotsTargetTimes.forEach(function (targetTime) {
+                const startTime = new Date(targetTime.start);
+                const endTime = new Date(targetTime.end);
+                if (date >= startTime && date < endTime) {
+                    isTargetTime = true;
+                }
+            });
+
+            
             var valueToDisplay = key.value_inc_vat * multiplier;
-            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[4];
-            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[5];
-            else if (valueToDisplay > highlimit) colour = colours[1];
-            else if (valueToDisplay > mediumlimit) colour = colours[2];
-            else if (valueToDisplay <= 0) colour = colours[3];
+            // Apply bold styling if the current time is a target time
+            var boldStyle = isTargetTime ? 'time_highlight' : '';
+            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
+            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
+            else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
+            else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
+            else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
+            else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
 
             if(showpast || (date - Date.parse(new Date())>-1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time time_"+colour+"'>" + date_locale + time_locale + 
+                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_"+colour+"'>" + date_locale + time_locale +
                         "</td><td class='rate "+colour+"'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
 
                 if (x % rows_per_col == 0) {
@@ -287,6 +319,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         }
 
         const defaultConfig = {
+            // Entities to get data from
+            targetTimesEntity: null,
             // Controls how many columns the rates split in to
             cols: 1,
             // Show rates that already happened in the card
@@ -299,11 +333,13 @@ class OctopusEnergyRatesCard extends HTMLElement {
             title: 'Agile Rates',
             // Colour controls:
             // If the price is above highlimit, the row is marked red.
-            // If the price is above mediumlimit, the row is marked yellow.
-            // If the price is below mediumlimit, the row is marked green.
+            // If the price is above mediumlimit, the row is marked orange.
+            // If the price is above lowlimit, the row is marked dark green.
+            // If the price is below lowlimit, the row is marked green.
             // If the price is below 0, the row is marked blue.
-            mediumlimit: 20,
-            highlimit: 30,
+            lowlimit: 0.05,
+            mediumlimit: 0.10,
+            highlimit: 0.30,
             // Controls the rounding of the units of the rate
             roundUnits: 2,
             // The unit string to show if units are shown after each rate

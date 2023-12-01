@@ -40,16 +40,44 @@ The easiest way to find that entity name is by opening the Search within Home As
 
 (The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above. 
+Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
 
 ```
-currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-pastEntity: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
-futureEntity: event.octopus_energy_electricity_<your_id_here>_next_day_rates
 type: custom:octopus-energy-rates-card
+currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 cols: 2
+hour12: false
 showday: true
 showpast: false
+title: Octopus Import
+unitstr: p
+lowlimit: 15
+mediumlimit: 20
+highlimit: 30
+roundUnits: 2
+cheapest: true
+multiplier: 100
+
+```
+and here is one for export rates:
+```
+type: custom:octopus-energy-rates-card
+pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
+currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
+futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
+cols: 3
+hour12: false
+showday: false
+showpast: false
+title: Octopus Export
+unitstr: p
+lowlimit: null
+mediumlimit: 10
+highlimit: 19
+roundUnits: 2
+cheapest: true
+multiplier: 100
+exportrates: true
 ```
 
 Here's a breakdown of all the available configuration items:
@@ -59,10 +87,12 @@ Here's a breakdown of all the available configuration items:
 | currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
+| targetTimesEntity  | Y        | N/A           | Name of the sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
+| lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
@@ -78,14 +108,42 @@ Here's a breakdown of all the available configuration items:
 
 #### A note on colouring
 
-* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue
-* If the price is above `highlimit`, then the row is in red
-* If the price is above `mediumlimit`, then the row is coloured orange/yellow
-* Otherwise, the row is coloured is green.
-* These are reversed if `exportrates` is set to `true`
+* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue. 
+* If the price is above `highLimit`, then the row is in red
+* If the price is above `mediumLimit`, then the row is coloured orange
+* if the price is above `lowLimit`, then the row is coloured dark green
+* if the price is below `lowLimit`, then the row is coloured green
+* These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
+* Cheapest rate is coloured in light green (above 0) / light blue (below 0)
+* If Target Rate entity is included in the config, the target hours will be highlited in Navy Blue
 
-#### Screenshot
-![screenshot_1](assets/screenshot_1.png)
+#### Screenshots
+![screenshot_1](assets/import.png)
+![screenshot_2](assets/export.png)
+
+##### Advanced Configurations
+
+Import rates with the Target Rates and future rates entities specified:
+```
+type: custom:octopus-energy-rates-card
+currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
+cols: 3
+hour12: false
+showday: false
+showpast: false
+title: Octopus Import - p/kWh
+unitstr: ''
+lowlimit: 6
+mediumlimit: 15
+highlimit: 27
+cheapest: true
+multiplier: 100
+```
+![screenshot_3](assets/import_with_target.png)
+
+
 
 #### Thanks/inspiration
 This card was based on and reworked from the code [markgdev/home-assistant_OctopusAgile](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards) which is no longer maintained. 
