@@ -337,9 +337,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the price is above lowlimit, the row is marked dark green.
             // If the price is below lowlimit, the row is marked green.
             // If the price is below 0, the row is marked blue.
-            lowlimit: 0.05,
-            mediumlimit: 0.10,
-            highlimit: 0.30,
+            lowlimit: 5,
+            mediumlimit: 20,
+            highlimit: 30,
             // Controls the rounding of the units of the rate
             roundUnits: 2,
             // The unit string to show if units are shown after each rate
