@@ -125,6 +125,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const roundUnits = config.roundUnits;
         const showpast = config.showpast;
         const showday = config.showday;
+        const showtime = config.showtime;
         const hour12 = config.hour12;
         const cheapest = config.cheapest;
         const combinerate = config.combinerate;
@@ -244,7 +245,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             const lang = navigator.language || navigator.languages[0];
             var options = {hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute:'2-digit'};
             // The time formatted in the user's Locale
-            var time_locale = date.toLocaleTimeString(lang, options);
+            var time_locale = (showtime ? date.toLocaleTimeString(lang, options) + '' : '');
             // If the showday config option is set, include the shortened weekday name in the user's Locale
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
@@ -327,6 +328,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             showpast: false,
             // Show the day of the week with the time
             showday: false,
+            // Show the start time of the rates
+            showtime: true,
             // Use 12 or 24 hour time
             hour12: true,
             // Controls the title of the card

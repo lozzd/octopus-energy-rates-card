@@ -91,6 +91,7 @@ Here's a breakdown of all the available configuration items:
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
+| showtime      | Y        | true          | Shows the time for each rate.                                                                                                                        |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
 | lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
