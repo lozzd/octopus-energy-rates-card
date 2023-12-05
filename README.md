@@ -102,7 +102,7 @@ Here's a breakdown of all the available configuration items:
 | exportrates   | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
 | hour12        | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
 | cheapest      | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                           |
-| combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                        |
+| combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tariff for instance                                        |
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
 
 
