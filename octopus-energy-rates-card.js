@@ -24,6 +24,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.time_highlight {
                 font-weight: bold;
                 background-color: Navy;
+                color: white; /* Add this line to set text color to white */
             }
             thead th {
                 text-align: left;
