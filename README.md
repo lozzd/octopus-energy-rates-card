@@ -103,7 +103,7 @@ Here's a breakdown of all the available configuration items:
 | cheapest      | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                           |
 | combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                        |
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
-| rowLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates
+| rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates
 
 
 #### A note on colouring
