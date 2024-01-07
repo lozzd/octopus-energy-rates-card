@@ -203,7 +203,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             rates_processingRow ++;
             var ratesToEvaluate = key.value_inc_vat * multiplier;
 
-            if(showpast || (date - Date.parse(new Date())>-1800000)) 
+            if((showpast || (date - Date.parse(new Date())>-1800000)) && (rateListLimit == 0 || rates_list_length < rateListLimit)) 
             {
                 rates_currentNumber++;
                 
@@ -229,9 +229,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 }
                 previous_rate = ratesToEvaluate;
                 previous_rates_day = current_rates_day;
-            }
-            if(rateListLimit > 0 && rates_list_length == rateListLimit) {
-                throw new Error(); // not ideal, but forEach doesn't check return nor support break
             }
         });
 
