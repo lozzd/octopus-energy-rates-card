@@ -231,7 +231,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 previous_rates_day = current_rates_day;
             }
             if(rateListLimit > 0 && rates_list_length == rateListLimit) {
-                return false;
+                throw new Error(); // not ideal, but forEach doesn't check return nor support break
             }
         });
 
