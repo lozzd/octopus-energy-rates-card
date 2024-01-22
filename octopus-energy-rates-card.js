@@ -24,6 +24,23 @@ class OctopusEnergyRatesCard extends HTMLElement {
             td.time_highlight {
                 font-weight: bold;
                 background-color: Navy;
+                color: white;
+            }
+            td.current {
+                position: relative;
+            }    
+            td.current:before{
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 0; 
+                height: 0; 
+                display: block;
+                border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
+                border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
+
+                border-right: 10px solid;
             }
             thead th {
                 text-align: left;
@@ -258,11 +275,18 @@ class OctopusEnergyRatesCard extends HTMLElement {
                     isTargetTime = true;
                 }
             });
+            var isCurrentTime = false;
+            if((date - Date.parse(new Date())>-1800000) &&(date < new Date())) {
+                if(showpast){
+                    isCurrentTime = true;
+                };
+            };
 
             
             var valueToDisplay = key.value_inc_vat * multiplier;
             // Apply bold styling if the current time is a target time
-            var boldStyle = isTargetTime ? 'time_highlight' : '';
+            var boldStyle = isCurrentTime ? "current " : "";
+            boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
             if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
             else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
             else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
