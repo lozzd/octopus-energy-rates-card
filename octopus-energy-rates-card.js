@@ -117,7 +117,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const targetTimesId = config.targetTimesEntity;
         const targetTimesstate = hass.states[targetTimesId];
         const targetTimesttributes = targetTimesstate ? this.reverseObject(targetTimesstate.attributes) : {};
-       
+        // Read the 2nd targetTimes entity if specified
+        const targetTimesId2 = config.targetTimesEntity2;
+        const targetTimesstate2 = hass.states[targetTimesId2];
+        const targetTimesttributes2 = targetTimesstate2 ? this.reverseObject(targetTimesstate2.attributes) : {};
+        
         const lowlimit = config.lowlimit;
         const mediumlimit = config.mediumlimit;
         const highlimit = config.highlimit;
@@ -134,6 +138,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var combinedRates = [];
         // Check if slotsTargetTimes is available before using forEach
         const slotsTargetTimes = targetTimesttributes.target_times || [];
+        const slotsTargetTimes2 = targetTimesttributes2.target_times || [];
         
         // Grab the rates which are stored as an attribute of the sensor
         const paststate = hass.states[pastEntityId];
@@ -258,6 +263,13 @@ class OctopusEnergyRatesCard extends HTMLElement {
                     isTargetTime = true;
                 }
             });
+            slotsTargetTimes2.forEach(function (targetTime) {
+                const startTime = new Date(targetTime.start);
+                const endTime = new Date(targetTime.end);
+                if (date >= startTime && date < endTime) {
+                    isTargetTime = true;
+                }
+            });
 
             
             var valueToDisplay = key.value_inc_vat * multiplier;
@@ -321,6 +333,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const defaultConfig = {
             // Entities to get data from
             targetTimesEntity: null,
+            targetTimesEntity2: null,
             // Controls how many columns the rates split in to
             cols: 1,
             // Show rates that already happened in the card
