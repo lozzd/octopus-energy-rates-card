@@ -96,6 +96,9 @@ Here's a breakdown of all the available configuration items:
 | lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
+| limitEntity   | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored|
+| highLimitMultiplier   | Y  | 1.1         | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                             |
+| mediumLimitMultiplier | Y  | 0.8         | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                              |
 | roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
 | showunits     | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                             |
 | unitstr       | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                       |

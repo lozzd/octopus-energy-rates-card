@@ -140,8 +140,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const targetTimesttributes2 = targetTimesstate2 ? this.reverseObject(targetTimesstate2.attributes) : {};
         
         const lowlimit = config.lowlimit;
-        const mediumlimit = config.mediumlimit;
-        const highlimit = config.highlimit;
+        var mediumlimit = config.mediumlimit;
+        var highlimit = config.highlimit;
         const unitstr = config.unitstr;
         const roundUnits = config.roundUnits;
         const showpast = config.showpast;
@@ -161,6 +161,18 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const paststate = hass.states[pastEntityId];
         const currentstate = hass.states[currentEntityId];
         const futurestate = hass.states[futureEntityId];
+
+        // Get Limit entity values
+        const limitEntity = config.limitEntity;
+        const limitEntityState = hass.states[limitEntity];
+        const limitHighMult = config.highLimitMultiplier;
+        const limitMedMult = config.mediumLimitMultiplier;
+
+        if(!(limitEntity == null)){
+            const limitAve = parseFloat(limitEntityState.state);
+            mediumlimit = limitAve * LimitMedMult;
+            highlimit = limitAve * LimitHighMult;
+        };
         
         // Combine the data sources
         if (typeof(paststate) != 'undefined' && paststate != null)
@@ -377,6 +389,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
+            // Entity to use for dynamic limits, above are ignored if limitEntity is set. 
+            limitEntity: null,
+            highLimitMultiplier: 1.1,
+            mediumLimitMultiplier: 0.8,
             // Controls the rounding of the units of the rate
             roundUnits: 2,
             // The unit string to show if units are shown after each rate
