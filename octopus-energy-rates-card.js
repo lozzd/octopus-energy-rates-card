@@ -150,6 +150,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const cheapest = config.cheapest;
         const combinerate = config.combinerate;
         const multiplier = config.multiplier
+        const rateListLimit = config.rateListLimit
         var colours = (config.exportrates ? colours_export : colours_import);
         var rates_totalnumber = 0;
         var combinedRates = [];
@@ -236,7 +237,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             rates_processingRow ++;
             var ratesToEvaluate = key.value_inc_vat * multiplier;
 
-            if(showpast || (date - Date.parse(new Date())>-1800000)) 
+            if((showpast || (date - Date.parse(new Date())>-1800000)) && (rateListLimit == 0 || rates_list_length < rateListLimit)) 
             {
                 rates_currentNumber++;
                 
@@ -404,7 +405,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Combine equal rates
             combinerate: false,
             // multiple rate values for pence (100) or pounds (1)
-            multiplier: 100
+            multiplier: 100,
+            // Limit display to next X rows
+            rateListLimit: 0
         };
 
         const cardConfig = {
