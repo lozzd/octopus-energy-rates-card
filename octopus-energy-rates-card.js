@@ -171,8 +171,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
         if(!(limitEntity == null)){
             const limitAve = parseFloat(limitEntityState.state);
-            mediumlimit = limitAve * LimitMedMult;
-            highlimit = limitAve * LimitHighMult;
+            mediumlimit = limitAve * limitMedMult;
+            highlimit = limitAve * limitHighMult;
         };
         
         // Combine the data sources
