@@ -87,8 +87,7 @@ Here's a breakdown of all the available configuration items:
 | currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
-| targetTimesEntity  | Y        | N/A           | Name of the sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
-| targetTimesEntity2  | Y        | N/A           | Name of the second sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
+| targetTimesEntities  | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
@@ -109,6 +108,24 @@ Here's a breakdown of all the available configuration items:
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates
 
+Example for `targetTimesEntities`:
+```yaml
+targetTimesEntities:
+  binary_sensor.octopus_energy_target_rate1:
+    backgroundColour: navy
+    prefix: 💧
+  binary_sensor.octopus_energy_target_rate2:
+    backgroundColour: yellow
+    prefix: ⚡️
+  binary_sensor.octopus_energy_target_rate3:
+  binary_sensor.octopus_energy_target_rate4:
+```
+
+Each entity contains the following optional properties with their default values:
+```
+backgroundColour: navy
+prefix:
+```
 
 #### A note on colouring
 
@@ -119,7 +136,7 @@ Here's a breakdown of all the available configuration items:
 * if the price is below `lowLimit`, then the row is coloured green
 * These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
 * Cheapest rate is coloured in light green (above 0) / light blue (below 0)
-* If Target Rate entity is included in the config, the target hours will be highlited in Navy Blue
+* If targetTimesEntities is included in the config, the target hours will be highlighted based on the configuration (last color definition wins if there are multiple matches)
 
 #### Screenshots
 ![screenshot_1](assets/import.png)
