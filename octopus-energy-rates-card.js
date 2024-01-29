@@ -361,11 +361,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
     }
 }
 
-customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
+customElements.define('octopus-energy-rates-card-swt', OctopusEnergyRatesCard);
 // Configure the preview in the Lovelace card picker
 window.customCards = window.customCards || [];
 window.customCards.push({
-    type: 'octopus-energy-rates-card',
+    type: 'octopus-energy-rates-card-swt',
     name: 'Octopus Energy Rates Card',
     preview: false,
     description: 'This card displays the energy rates for Octopus Energy',
