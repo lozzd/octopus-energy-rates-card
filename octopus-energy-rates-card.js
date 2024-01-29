@@ -131,7 +131,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const pastEntityId = config.pastEntity;
         // Create an empty array to store the parsed attributes
         const allSlotsTargetTimes = [];
-        const targetTimesEntities = Object.keys(config.targetTimesEntities) || [];
+        const targetTimesEntities = config.targetTimesEntities && Object.keys(config.targetTimesEntities) || [];
         // Iterate through each entity in targetTimesEntities
         for (const entityId of targetTimesEntities) {
             const entityTimesState = hass.states[entityId];
