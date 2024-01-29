@@ -87,8 +87,7 @@ Here's a breakdown of all the available configuration items:
 | currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
-| targetTimesEntity  | Y        | N/A           | Name of the sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
-| targetTimesEntity2  | Y        | N/A           | Name of the second sensor that contains the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md)                  |
+| targetTimesEntities  | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                  |
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
@@ -109,7 +108,6 @@ Here's a breakdown of all the available configuration items:
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates
 
-
 #### A note on colouring
 
 * The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue. 
@@ -119,7 +117,7 @@ Here's a breakdown of all the available configuration items:
 * if the price is below `lowLimit`, then the row is coloured green
 * These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
 * Cheapest rate is coloured in light green (above 0) / light blue (below 0)
-* If Target Rate entity is included in the config, the target hours will be highlited in Navy Blue
+* If targetTimesEntities is included in the config, the target hours will be highlighted in Navy by default (can be changed via the config)
 
 #### Screenshots
 ![screenshot_1](assets/import.png)
@@ -132,7 +130,8 @@ Import rates with the Target Rates and future rates entities specified:
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_best_charging_rates
+targetTimesEnties:
+  binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
 cols: 3
 hour12: false
 showday: false
@@ -147,6 +146,41 @@ multiplier: 100
 ```
 ![screenshot_3](assets/import_with_target.png)
 
+Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card.
+```
+type: custom:octopus-energy-rates-card
+pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
+futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+cols: 2
+showday: true
+showpast: false
+lowlimit: 20
+mediumlimit: 20
+highlimit: 30
+roundUnits: 2
+unitstr: p/kWh
+hour12: true
+cheapest: false
+multiplier: 100
+exportrates: false
+targetTimesEntities:
+  binary_sensor.octopus_energy_target_intermittent_best_2h_rates:
+    backgroundColour: orange
+    prefix: ♨️
+  binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
+    backgroundColour: navy
+    prefix: 💧
+```
+
+Each entity contains the following optional properties with their default values:
+```
+backgroundColour: navy
+prefix:
+```
+
+You can see how the above configuration looks like in the screenshot below:
+![screenshot_2](assets/screenshot_2.png)
 
 
 #### Thanks/inspiration
