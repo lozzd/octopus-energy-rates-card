@@ -130,7 +130,7 @@ Import rates with the Target Rates and future rates entities specified:
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-targetTimesEnties:
+targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
 cols: 3
 hour12: false
@@ -178,6 +178,10 @@ Each entity contains the following optional properties with their default values
 backgroundColour: navy
 prefix:
 ```
+
+For all possible `backgroundColour` combinations, please have a look at the [valid HTML color names](https://www.w3schools.com/colors/colors_names.asp).
+
+If you're interested to find emojis for `prefix`, you might find it the easiest to look at [Emojipedia](https://emojipedia.org/).
 
 You can see how the above configuration looks like in the screenshot below:
 ![screenshot_2](assets/screenshot_2.png)
