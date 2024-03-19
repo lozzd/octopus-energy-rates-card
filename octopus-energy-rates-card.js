@@ -124,6 +124,20 @@ class OctopusEnergyRatesCard extends HTMLElement {
             this.appendChild(card);
         }
 
+        // Initialise the lastRefreshTimestamp
+        if (!this.lastRefreshTimestamp) {
+            // Store the timestamp of the last refresh
+            this.lastRefreshTimestamp = 0;
+        }
+
+        // Check if the interval has passed
+        const currentTime = Date.now();
+        const cardRefreshIntervalSecondsInMilliseconds = config.cardRefreshIntervalSeconds * 1000;
+        if (!(currentTime - this.lastRefreshTimestamp >= cardRefreshIntervalSecondsInMilliseconds)) {
+            return
+        }
+        this.lastRefreshTimestamp = currentTime;
+
         const colours_import = ['lightgreen', 'green', 'orange', 'red', 'blue', 'cheapest', 'cheapestblue'];
         const colours_export = ['red', 'green', 'orange', 'green'];
         const currentEntityId = config.currentEntity;
@@ -410,7 +424,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // multiple rate values for pence (100) or pounds (1)
             multiplier: 100,
             // Limit display to next X rows
-            rateListLimit: 0
+            rateListLimit: 0,
+            // How often should the card refresh in seconds
+            cardRefreshIntervalSeconds: 60
         };
 
         const cardConfig = {
