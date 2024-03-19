@@ -91,6 +91,7 @@ Here's a breakdown of all the available configuration items:
 | cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
+| showtime      | Y        | true          | Shows the time for each rate.                                                                                                                        |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
 | lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
@@ -104,7 +105,7 @@ Here's a breakdown of all the available configuration items:
 | exportrates   | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
 | hour12        | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
 | cheapest      | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                           |
-| combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                        |
+| combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tariff for instance                                        |
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                             |
 | cardRefreshIntervalSeconds | Y | 60      | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                              |
