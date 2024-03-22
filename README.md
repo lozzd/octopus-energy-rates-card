@@ -92,7 +92,7 @@ Here's a breakdown of all the available configuration items:
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
-| lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
+| lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates)                                    |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | limitEntity   | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored|
@@ -108,6 +108,7 @@ Here's a breakdown of all the available configuration items:
 | multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                             |
 | cardRefreshIntervalSeconds | Y | 60      | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                              |
+| additionalDynamicLimits | Y | N/A       | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The color specified here takes precedence compared to the one in `targetTimesEntities`. |
 
 #### A note on colouring
 
@@ -119,6 +120,28 @@ Here's a breakdown of all the available configuration items:
 * These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
 * Cheapest rate is coloured in light green (above 0) / light blue (below 0)
 * If targetTimesEntities is included in the config, the target hours will be highlighted in Navy by default (can be changed via the config)
+
+#### A note on `lowlimit` and `mediumlimit` and `highlimit` options
+
+You can either set these to a fixed value, or you can specify the entity which contains the value you want to use for these limits.
+
+An example of how the fixed values look in the config:
+
+```yaml
+lowlimit: 15
+mediumlimit: 20
+highlimit: 30
+```
+
+And here's an example of how to use entities for the limits:
+
+```yaml
+lowlimit: sensor.average_rate_last_12_hours
+mediumlimit: input_number.medium_rate_limit
+highlimit: 30
+```
+
+Note that it is possible for you to mix and match fixed values and entities as you see fit.
 
 #### Screenshots
 ![screenshot_1](assets/import.png)
@@ -147,7 +170,7 @@ multiplier: 100
 ```
 ![screenshot_3](assets/import_with_target.png)
 
-Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card.
+Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card. It also contains an example for `additionalDynamicLimits` property to highlight when a specific threshold is reached.
 ```
 type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
@@ -165,6 +188,10 @@ hour12: true
 cheapest: false
 multiplier: 100
 exportrates: false
+additionalDynamicLimits:
+  input_number.threshold_turn_on_air_conditioning:
+    backgroundColour: DarkOliveGreen
+    prefix: 💰
 targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_2h_rates:
     backgroundColour: orange
