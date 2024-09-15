@@ -337,7 +337,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the showday config option is set, include the shortened weekday name in the user's Locale
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
-            var colour = colours[1];  // Default to 'green' (index 1) (below low limit above 0)
+            var colour = this._config.colours.low;  // Default to 'low' color
             var isTargetTime = false;
             var targetTimeBackgroundColor = "";
             var targetTimePrefix = "";
@@ -374,16 +374,24 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Apply bold styling if the current time is a target time
             var boldStyle = isCurrentTime ? "current " : "";
             boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
-            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
-            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
-            else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
-            else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
-            else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
-            else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
+            
+            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = this._config.colours.cheapest;
+            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = this._config.colours.cheapestNegative;
+            else if (valueToDisplay > highlimit) colour = this._config.colours.highest;
+            else if (valueToDisplay > mediumlimit) colour = this._config.colours.high;
+            else if (valueToDisplay > lowlimit) colour = this._config.colours.medium;
+            else if (valueToDisplay <= 0) colour = this._config.colours.negative;
+            else colour = this._config.colours.low;
 
-            if (showpast || (date - Date.parse(new Date()) > -1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + date_locale + time_locale +
-                    "</td><td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+            if (config.showpast || (date - Date.parse(new Date()) > -1800000)) {
+                table = table.concat(`<tr class='rate_row'>
+                    <td class='time ${boldStyle}' style='border-bottom: 1px solid ${colour}; ${targetTimeBackgroundColor}'>
+                        ${targetTimePrefix}${date_locale}${time_locale}
+                    </td>
+                    <td class='rate' style='background-color: ${colour}; border: 2px solid ${colour};'>
+                        ${valueToDisplay.toFixed(roundUnits)}${unitstr}
+                    </td>
+                </tr>`);
 
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
@@ -395,7 +403,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 };
                 x++;
             }
-        });
+        }.bind(this));
         tables = tables.concat(table);
         tables = tables.concat("</tbody></table></td>");
 
@@ -444,12 +452,16 @@ class OctopusEnergyRatesCard extends HTMLElement {
             hour12: true,
             // Controls the title of the card
             title: 'Agile Rates',
-            // Colour controls:
-            // If the price is above highlimit, the row is marked red.
-            // If the price is above mediumlimit, the row is marked orange.
-            // If the price is above lowlimit, the row is marked dark green.
-            // If the price is below lowlimit, the row is marked green.
-            // If the price is below 0, the row is marked blue.
+            // New color configuration options
+            colours: {
+                low: 'MediumSeaGreen',
+                medium: 'orange',
+                high: 'Tomato',
+                highest: 'red',
+                negative: '#391CD9',
+                cheapest: 'LightGreen',
+                cheapestNegative: 'LightBlue'
+            },
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
