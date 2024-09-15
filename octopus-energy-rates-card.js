@@ -381,7 +381,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay > mediumlimit) colour = this._config.colours.high;
             else if (valueToDisplay > lowlimit) colour = this._config.colours.medium;
             else if (valueToDisplay <= 0) colour = this._config.colours.negative;
-            else colour = this._config.colours.lowest;
+            else colour = this._config.colours.low;
 
             if (config.showpast || (date - Date.parse(new Date()) > -1800000)) {
                 table = table.concat(`<tr class='rate_row'>
@@ -454,7 +454,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
             title: 'Agile Rates',
             // New color configuration options
             colours: {
-                lowest: 'LightGreen',
                 low: 'MediumSeaGreen',
                 medium: 'orange',
                 high: 'Tomato',

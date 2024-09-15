@@ -62,14 +62,13 @@ roundUnits: 2
 cheapest: true
 multiplier: 100
 colours:
-  lowest: "#90EE90"
-  low: "#2E8B57"
-  medium: "#FFA500"
-  high: "#FF6347"
-  highest: "#FF0000"
-  negative: "#4169E1"
-  cheapest: "#98FB98"
-  cheapestNegative: "#ADD8E6"
+  negative: "#391CD9"
+  low: "MediumSeaGreen"
+  medium: "orange"
+  high: "Tomato"
+  highest: "red"
+  cheapest: "LightGreen"
+  cheapestNegative: "LightBlue"
 ```
 
 and here is one for export rates:
@@ -93,13 +92,13 @@ cheapest: true
 multiplier: 100
 exportrates: true
 colours:
-  lowest: "#FF0000"
-  low: "#FFA500"
-  medium: "#2E8B57"
-  high: "#90EE90"
-  negative: "#4169E1"
-  cheapest: "#98FB98"
-  cheapestNegative: "#ADD8E6"
+  negative: "#391CD9"
+  low: "MediumSeaGreen"
+  medium: "orange"
+  high: "Tomato"
+  highest: "red"
+  cheapest: "LightGreen"
+  cheapestNegative: "LightBlue"
 ```
 
 Here's a breakdown of all the available configuration items:
@@ -139,12 +138,11 @@ The `colours` configuration allows you to customize the colours used for differe
 
 ```yaml
 colours:
-  lowest: "LightGreen"
+  negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
   highest: "red"
-  negative: "#391CD9"
   cheapest: "LightGreen"
   cheapestNegative: "LightBlue"
 ```
@@ -153,20 +151,13 @@ You can override any of these colours in your configuration. colours can be spec
 
 Here's what each colour represents:
 
-- `lowest`: Used for rates below the `lowlimit`
-- `low`: Used for rates between `lowlimit` and `mediumlimit`
-- `medium`: Used for rates between `mediumlimit` and `highlimit`
-- `high`: Used for rates above `highlimit`
-- `highest`: Used for the highest rates (typically above `highlimit`)
 - `negative`: Used for plunge pricing (rates below 0)
+- `low`: Used for rates below `lowlimit` and 0
+- `medium`: Used for rates between `lowlimit` and `mediumlimit`
+- `high`: Used for rates between `mediumlimit` and `highlimit`
+- `highest`: Used for rates above `highlimit`
 - `cheapest`: Used to highlight the cheapest positive rate when `cheapest: true`
 - `cheapestNegative`: Used to highlight the cheapest negative rate when `cheapest: true`
-
-For export rates (`exportrates: true`), the colour scheme is slightly different:
-
-- `lowest` (red): Used for the lowest export rates
-- `low` (orange): Used for medium export rates
-- `medium` (green): Used for the highest export rates
 
 ## Screenshots
 
@@ -194,12 +185,6 @@ mediumlimit: 15
 highlimit: 27
 cheapest: true
 multiplier: 100
-colours:
-  lowest: "#90EE90"
-  low: "#2E8B57"
-  medium: "#FFA500"
-  high: "#FF6347"
-  highest: "#FF0000"
 ```
 
 ![screenshot_3](assets/import_with_target.png)
@@ -234,15 +219,6 @@ targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
     backgroundColour: navy
     prefix: 💧
-colours:
-  lowest: "#90EE90"
-  low: "#2E8B57"
-  medium: "#FFA500"
-  high: "#FF6347"
-  highest: "#FF0000"
-  negative: "#4169E1"
-  cheapest: "#98FB98"
-  cheapestNegative: "#ADD8E6"
 ```
 
 Each entity contains the following optional properties with their default values:
