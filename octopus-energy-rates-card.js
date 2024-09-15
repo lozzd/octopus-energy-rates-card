@@ -45,7 +45,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
             title: 'Agile Rates',
             // Color configuration options
             colors: {
-                lowest: 'LightGreen',
                 low: 'MediumSeaGreen',
                 medium: 'orange',
                 high: 'Tomato',
@@ -320,7 +319,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         } else if (valueToDisplay <= 0) {
             color = colors.negative;
         } else {
-            color = colors.lowest;
+            color = colors.low;
         }
 
         return { color, isTargetTime, targetTimeBackgroundColor, targetTimePrefix };
