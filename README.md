@@ -249,14 +249,14 @@ Each entity contains the following optional properties with their default values
 
 ```yaml
 backgroundColour: navy
-prefix:
 ```
 
-For all possible `backgroundColour` combinations, please have a look at the [valid HTML colour names](https://www.w3schools.com/colours/colours_names.asp).
+For all possible `backgroundColour` combinations, please have a look at the [valid HTML colour names](https://www.w3schools.com/colors/colors_names.asp).
 
 If you're interested in finding emojis for `prefix`, you might find it easiest to look at [Emojipedia](https://emojipedia.org/).
 
 You can see how the above configuration looks like in the screenshot below:
+
 ![screenshot_2](assets/screenshot_2.png)
 
 #### Thanks/inspiration
