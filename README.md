@@ -61,7 +61,7 @@ highlimit: 30
 roundUnits: 2
 cheapest: true
 multiplier: 100
-colors:
+colours:
   lowest: "#90EE90"
   low: "#2E8B57"
   medium: "#FFA500"
@@ -92,7 +92,7 @@ roundUnits: 2
 cheapest: true
 multiplier: 100
 exportrates: true
-colors:
+colours:
   lowest: "#FF0000"
   low: "#FFA500"
   medium: "#2E8B57"
@@ -104,41 +104,41 @@ colors:
 
 Here's a breakdown of all the available configuration items:
 
-| Name                       | Optional | Default       | Description                                                                                                                                                                                                                                                                                     |
-| -------------------------- | -------- | ------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| currentEntity              | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                             |
-| pastEntity                 | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                                |
-| futureEntity               | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                              |
-| targetTimesEntities        | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                                      |
-| cols                       | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                                                                                                                                                               |
-| showpast                   | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                                                                                                                                                               |
-| showday                    | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display                                                                                                                                            |
-| title                      | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                                                                                                                                                                          |
-| lowlimit                   | Y        | 5 (pence)     | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates)                                                                                                                                                                               |
-| mediumlimit                | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                                                                                                                                                                   |
-| highlimit                  | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                                                                                                                                                                       |
-| limitEntity                | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored                                                                                                                         |
-| highLimitMultiplier        | Y        | 1.1           | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                                                                                                                                                                         |
-| mediumLimitMultiplier      | Y        | 0.8           | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                                                                                                                                                                          |
-| roundUnits                 | Y        | 2             | Controls how many decimal places to round the rates to                                                                                                                                                                                                                                          |
-| showunits                  | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                                                                                                                                        |
-| unitstr                    | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                                                                                                                                                                  |
-| exportrates                | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                                                                                                                                                                        |
-| hour12                     | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                                                                                                                                                                       |
-| cheapest                   | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                                                                                                                                                                      |
-| combinerate                | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                                                                                                                                                                   |
-| multiplier                 | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                                                                                                                                                              |
-| rateListLimit              | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                                                                                                                                                                             |
-| cardRefreshIntervalSeconds | Y        | 60            | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                                                                                                                                                                         |
-| additionalDynamicLimits    | Y        | N/A           | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The color specified here takes precedence compared to the one in `targetTimesEntities`. |
-| colors                     | Y        | See below     | Custom color configuration for different rate levels                                                                                                                                                                                                                                            |
+| Name                       | Optional | Default       | Description                                                                                                                                                                                                                                                                                      |
+| -------------------------- | -------- | ------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| currentEntity              | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                              |
+| pastEntity                 | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                                 |
+| futureEntity               | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                               |
+| targetTimesEntities        | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                                       |
+| cols                       | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                                                                                                                                                                |
+| showpast                   | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                                                                                                                                                                |
+| showday                    | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display                                                                                                                                             |
+| title                      | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                                                                                                                                                                           |
+| lowlimit                   | Y        | 5 (pence)     | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates)                                                                                                                                                                                |
+| mediumlimit                | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                                                                                                                                                                    |
+| highlimit                  | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                                                                                                                                                                        |
+| limitEntity                | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored                                                                                                                          |
+| highLimitMultiplier        | Y        | 1.1           | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                                                                                                                                                                          |
+| mediumLimitMultiplier      | Y        | 0.8           | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                                                                                                                                                                           |
+| roundUnits                 | Y        | 2             | Controls how many decimal places to round the rates to                                                                                                                                                                                                                                           |
+| showunits                  | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                                                                                                                                         |
+| unitstr                    | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                                                                                                                                                                   |
+| exportrates                | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                                                                                                                                                                         |
+| hour12                     | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                                                                                                                                                                        |
+| cheapest                   | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                                                                                                                                                                       |
+| combinerate                | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                                                                                                                                                                    |
+| multiplier                 | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                                                                                                                                                               |
+| rateListLimit              | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                                                                                                                                                                              |
+| cardRefreshIntervalSeconds | Y        | 60            | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                                                                                                                                                                          |
+| additionalDynamicLimits    | Y        | N/A           | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The colour specified here takes precedence compared to the one in `targetTimesEntities`. |
+| colours                    | Y        | See below     | Custom colour configuration for different rate levels                                                                                                                                                                                                                                            |
 
-### Color Configuration
+### Colour Configuration
 
-The `colors` configuration allows you to customize the colors used for different rate levels. Here's the default color configuration:
+The `colours` configuration allows you to customize the colours used for different rate levels. Here's the default colour configuration:
 
 ```yaml
-colors:
+colours:
   lowest: "LightGreen"
   low: "MediumSeaGreen"
   medium: "orange"
@@ -149,9 +149,9 @@ colors:
   cheapestNegative: "LightBlue"
 ```
 
-You can override any of these colors in your configuration. Colors can be specified using color names (e.g., 'red', 'blue') or hexadecimal color codes (e.g., '#FF0000', '#0000FF').
+You can override any of these colours in your configuration. colours can be specified using colour names (e.g., 'red', 'blue') or hexadecimal colour codes (e.g., '#FF0000', '#0000FF').
 
-Here's what each color represents:
+Here's what each colour represents:
 
 - `lowest`: Used for rates below the `lowlimit`
 - `low`: Used for rates between `lowlimit` and `mediumlimit`
@@ -162,12 +162,11 @@ Here's what each color represents:
 - `cheapest`: Used to highlight the cheapest positive rate when `cheapest: true`
 - `cheapestNegative`: Used to highlight the cheapest negative rate when `cheapest: true`
 
-For export rates (`exportrates: true`), the color scheme is slightly different:
+For export rates (`exportrates: true`), the colour scheme is slightly different:
 
 - `lowest` (red): Used for the lowest export rates
 - `low` (orange): Used for medium export rates
 - `medium` (green): Used for the highest export rates
-
 
 ## Screenshots
 
@@ -195,7 +194,7 @@ mediumlimit: 15
 highlimit: 27
 cheapest: true
 multiplier: 100
-colors:
+colours:
   lowest: "#90EE90"
   low: "#2E8B57"
   medium: "#FFA500"
@@ -235,7 +234,7 @@ targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
     backgroundColour: navy
     prefix: 💧
-colors:
+colours:
   lowest: "#90EE90"
   low: "#2E8B57"
   medium: "#FFA500"
@@ -253,7 +252,7 @@ backgroundColour: navy
 prefix:
 ```
 
-For all possible `backgroundColour` combinations, please have a look at the [valid HTML color names](https://www.w3schools.com/colors/colors_names.asp).
+For all possible `backgroundColour` combinations, please have a look at the [valid HTML colour names](https://www.w3schools.com/colours/colours_names.asp).
 
 If you're interested in finding emojis for `prefix`, you might find it easiest to look at [Emojipedia](https://emojipedia.org/).
 

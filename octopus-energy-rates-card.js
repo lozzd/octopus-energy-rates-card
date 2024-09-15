@@ -337,7 +337,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the showday config option is set, include the shortened weekday name in the user's Locale
             var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
 
-            var colour = this._config.colors.low;  // Default to 'low' color
+            var colour = this._config.colours.low;  // Default to 'low' color
             var isTargetTime = false;
             var targetTimeBackgroundColor = "";
             var targetTimePrefix = "";
@@ -375,13 +375,13 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var boldStyle = isCurrentTime ? "current " : "";
             boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
             
-            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = this._config.colors.cheapest;
-            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = this._config.colors.cheapestNegative;
-            else if (valueToDisplay > highlimit) colour = this._config.colors.highest;
-            else if (valueToDisplay > mediumlimit) colour = this._config.colors.high;
-            else if (valueToDisplay > lowlimit) colour = this._config.colors.medium;
-            else if (valueToDisplay <= 0) colour = this._config.colors.negative;
-            else colour = this._config.colors.lowest;
+            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = this._config.colours.cheapest;
+            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = this._config.colours.cheapestNegative;
+            else if (valueToDisplay > highlimit) colour = this._config.colours.highest;
+            else if (valueToDisplay > mediumlimit) colour = this._config.colours.high;
+            else if (valueToDisplay > lowlimit) colour = this._config.colours.medium;
+            else if (valueToDisplay <= 0) colour = this._config.colours.negative;
+            else colour = this._config.colours.lowest;
 
             if (config.showpast || (date - Date.parse(new Date()) > -1800000)) {
                 table = table.concat(`<tr class='rate_row'>
@@ -453,7 +453,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Controls the title of the card
             title: 'Agile Rates',
             // New color configuration options
-            colors: {
+            colours: {
                 lowest: 'LightGreen',
                 low: 'MediumSeaGreen',
                 medium: 'orange',
