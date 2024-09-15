@@ -28,10 +28,15 @@ class OctopusEnergyRatesCard extends LitElement {
     return {
       currentEntity: "",
       title: "Octopus Energy Rates",
-      cols: 1,
-      showpast: false,
-      showday: true,
-      hour12: true,
+      display: {
+        cols: 1,
+        showpast: false,
+        showday: true,
+        hour12: true,
+        roundUnits: 2,
+        unitstr: "p/kWh",
+        multiplier: 100,
+      },
       colours: {
         low: "MediumSeaGreen",
         medium: "orange",
@@ -43,9 +48,6 @@ class OctopusEnergyRatesCard extends LitElement {
         medium: 0.25,
         high: 0.35,
       },
-      roundUnits: 2,
-      unitstr: "p/kWh",
-      multiplier: 100,
     };
   }
 
@@ -53,10 +55,15 @@ class OctopusEnergyRatesCard extends LitElement {
     return {
       currentEntity: "",
       title: "Octopus Energy Rates",
-      cols: 1,
-      showpast: false,
-      showday: true,
-      hour12: true,
+      display: {
+        cols: 1,
+        showpast: false,
+        showday: true,
+        hour12: true,
+        roundUnits: 2,
+        unitstr: "p/kWh",
+        multiplier: 100,
+      },
       colours: {
         low: "#4CAF50", // MediumSeaGreen
         medium: "#FFA500", // Orange
@@ -136,7 +143,7 @@ class OctopusEnergyRatesCard extends LitElement {
   }
 
   getFilteredRates(rates) {
-    const { showpast } = this._config;
+    const { showpast } = this._config.display;
     const now = new Date();
     return rates.filter((rate) => {
       const rateDate = new Date(rate.start);
@@ -145,7 +152,7 @@ class OctopusEnergyRatesCard extends LitElement {
   }
 
   splitIntoColumns(rates) {
-    const cols = this._config.cols || 1;
+    const cols = this._config.display.cols || 1;
     const columns = Array.from({ length: cols }, () => []);
     rates.forEach((rate, index) => {
       columns[index % cols].push(rate);
@@ -164,7 +171,8 @@ class OctopusEnergyRatesCard extends LitElement {
   }
 
   renderRateRow(rate) {
-    const { hour12, showday, unitstr, roundUnits, multiplier } = this._config;
+    const { hour12, showday, unitstr, roundUnits, multiplier } =
+      this._config.display;
     const startDate = new Date(rate.start);
     const formattedTime = startDate.toLocaleTimeString(navigator.language, {
       hour: "numeric",
@@ -223,12 +231,21 @@ class OctopusEnergyRatesCardEditor extends LitElement {
         .hass=${this.hass}
         .data=${this._config}
         .schema=${[
-          { name: "currentEntity", selector: { entity: {} } },
           { name: "title", selector: { text: {} } },
-          { name: "cols", selector: { number: { min: 1, max: 5 } } },
-          { name: "showpast", selector: { boolean: {} } },
-          { name: "showday", selector: { boolean: {} } },
-          { name: "hour12", selector: { boolean: {} } },
+          { name: "currentEntity", selector: { entity: {} } },
+          {
+            type: "expandable",
+            name: "display",
+            title: "Display Options",
+            iconPath:
+              "M16,20L20,20L20,16L16,16L16,20M16,14L20,14L20,10L16,10L16,14M10,8L14,8L14,4L10,4L10,8M16,8L20,8L20,4L16,4L16,8M10,14L14,14L14,10L10,10L10,14M4,14L8,14L8,10L4,10L4,14M4,20L8,20L8,16L4,16L4,20M10,20L14,20L14,16L10,16L10,20M4,8L8,8L8,4L4,4L4,8Z",
+            schema: [
+              { name: "cols", selector: { number: { min: 1, max: 5 } } },
+              { name: "showpast", selector: { boolean: {} } },
+              { name: "showday", selector: { boolean: {} } },
+              { name: "hour12", selector: { boolean: {} } },
+            ],
+          },
           {
             type: "expandable",
             name: "limits",
