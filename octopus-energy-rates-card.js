@@ -244,6 +244,8 @@ class OctopusEnergyRatesCardEditor extends LitElement {
               { name: "showpast", selector: { boolean: {} } },
               { name: "showday", selector: { boolean: {} } },
               { name: "hour12", selector: { boolean: {} } },
+              { name: "roundUnits", selector: { number: { min: 0, max: 3 } } },
+              { name: "unitstr", selector: { text: {} } },
             ],
           },
           {
