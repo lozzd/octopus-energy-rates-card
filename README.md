@@ -37,7 +37,7 @@ Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates 
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you.
 
-The only **required** key is the name of the entity sensor that contains the rates. At least one of the "current", "previous" or "next" day rate entities will need to be selected.
+The only **required** key is the current entity under the `entities` section. This should be the name of the entity sensor that contains the current rates. At least one of the "current", "past" or "future" day rate entities will need to be selected.
 
 As of version 9.0.0 of the Octopus Energy integration, these entities are now called `events` and not enabled by default. In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
 
@@ -49,8 +49,11 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 
 ```yaml
 type: custom:octopus-energy-rates-card
-currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 title: Octopus Import
+entities:
+  current: event.octopus_energy_electricity_<your_id_here>_current_day_rates
+  past: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
+  future: event.octopus_energy_electricity_<your_id_here>_next_day_rates
 display:
   cols: 2
   hour12: false
@@ -64,6 +67,7 @@ limits:
   medium: 0.20
   high: 0.30
 colours:
+  negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
@@ -74,10 +78,11 @@ and here is one for export rates:
 
 ```yaml
 type: custom:octopus-energy-rates-card
-pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
-currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
 title: Octopus Export
+entities:
+  current: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
+  past: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
+  future: event.octopus_energy_electricity_<your_id_here>_export_next_day_rates
 display:
   cols: 3
   hour12: false
@@ -99,15 +104,30 @@ colours:
 
 Here's a breakdown of all the available configuration items:
 
-| Name          | Optional | Default                | Description                                                                                                                         |
-| ------------- | -------- | ---------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| currentEntity | N        | N/A                    | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration |
-| pastEntity    | Y        | N/A                    | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration    |
-| futureEntity  | Y        | N/A                    | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration  |
-| title         | Y        | "Octopus Energy Rates" | The title of the card in the dashboard                                                                                              |
-| display       | Y        | See below              | Object containing display-related configuration                                                                                     |
-| limits        | Y        | See below              | Object containing rate limit configurations                                                                                         |
-| colours       | Y        | See below              | Object containing colour configurations for different rate levels                                                                   |
+| Name     | Optional | Default                | Description                                                       |
+| -------- | -------- | ---------------------- | :---------------------------------------------------------------- |
+| title    | Y        | "Octopus Energy Rates" | The title of the card in the dashboard                            |
+| entities | N        | N/A                    | Object containing entity IDs for current, past, and future rates  |
+| display  | Y        | See below              | Object containing display-related configuration                   |
+| limits   | Y        | See below              | Object containing rate limit configurations                       |
+| colours  | Y        | See below              | Object containing colour configurations for different rate levels |
+
+### Entities Configuration
+
+The `entities` configuration allows you to specify the entities for current, past, and future rates. Here's the default configuration:
+
+```yaml
+entities:
+  current: "" # Required
+  past: "" # Optional
+  future: "" # Optional
+```
+
+| Name    | Optional | Default | Description                            |
+| ------- | -------- | ------- | :------------------------------------- |
+| current | N        | N/A     | Entity ID for current rates (required) |
+| past    | Y        | ""      | Entity ID for past rates               |
+| future  | Y        | ""      | Entity ID for future rates             |
 
 ### Display Configuration
 
@@ -157,6 +177,7 @@ The `colours` configuration allows you to customize the colours used for differe
 
 ```yaml
 colours:
+  negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
@@ -176,21 +197,31 @@ Import rates with the Target Rates and future rates entities specified:
 
 ```yaml
 type: custom:octopus-energy-rates-card
-currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+title: Octopus Import - p/kWh
+entities:
+  current: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+  future: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
 targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
-cols: 3
-hour12: false
-showday: false
-showpast: false
-title: Octopus Import - p/kWh
-unitstr: ""
-lowlimit: 6
-mediumlimit: 15
-highlimit: 27
+display:
+  cols: 3
+  hour12: false
+  showday: false
+  showpast: false
+  unitstr: ""
+  roundUnits: 2
+  multiplier: 100
+limits:
+  low: 0.06
+  medium: 0.15
+  high: 0.27
+colours:
+  negative: "#391CD9"
+  low: "MediumSeaGreen"
+  medium: "orange"
+  high: "Tomato"
+  highest: "red"
 cheapest: true
-multiplier: 100
 ```
 
 ![screenshot_3](assets/import_with_target.png)
@@ -199,21 +230,30 @@ Here is an example on how you can make use of the `targetTimesEntities` property
 
 ```yaml
 type: custom:octopus-energy-rates-card
-pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-cols: 2
-showday: true
-showpast: false
-lowlimit: 20
-mediumlimit: 20
-highlimit: 30
-roundUnits: 2
-unitstr: p/kWh
-hour12: true
+title: Octopus Import
+entities:
+  current: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+  past: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
+  future: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+display:
+  cols: 2
+  showday: true
+  showpast: false
+  hour12: true
+  roundUnits: 2
+  unitstr: p/kWh
+  multiplier: 100
+limits:
+  low: 0.20
+  medium: 0.20
+  high: 0.30
+colours:
+  negative: "#391CD9"
+  low: "MediumSeaGreen"
+  medium: "orange"
+  high: "Tomato"
+  highest: "red"
 cheapest: false
-multiplier: 100
-exportrates: false
 additionalDynamicLimits:
   input_number.threshold_turn_on_air_conditioning:
     backgroundColour: DarkOliveGreen
