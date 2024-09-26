@@ -1,6 +1,7 @@
 # Lovelace custom card for Octopus Energy Rate display
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
+This is a fork of the original [Octopus Energy Card by Lozzd](https://github.com/lozzd/octopus-energy-rates-card). I should point out that I've made a few improvements, but don't think I'll maintain or
+improve the card much further than this.
 
 This lovelace card displays the Octopus Energy rate prices per each 30 minute slot, pulling the data from sensors of the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration.
 
@@ -14,12 +15,12 @@ The easiest way to install it is via [HACS (Home Assistant Community Store)](htt
 
 Simply click this button to go directly to the details page:
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lozzd&repository=octopus-energy-rates-card&category=plugin)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=gaco79&repository=octopus-energy-rates-card&category=plugin)
 
 In the Home Assistant UI:
 
 - Use HACS -> Frontend -> Top Right Menu -> Custom repositories
-- Enter a repo of `lozzd/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
+- Enter a repo of `gaco79/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
 - Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry
 - Click "Download" in the bottom right
 
@@ -49,26 +50,24 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 ```yaml
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-cols: 2
-hour12: false
-showday: true
-showpast: false
 title: Octopus Import
-unitstr: p
-lowlimit: 15
-mediumlimit: 20
-highlimit: 30
-roundUnits: 2
-cheapest: true
-multiplier: 100
+display:
+  cols: 2
+  hour12: false
+  showday: true
+  showpast: false
+  unitstr: p
+  roundUnits: 2
+  multiplier: 100
+limits:
+  low: 0.15
+  medium: 0.20
+  high: 0.30
 colours:
-  negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
   highest: "red"
-  cheapest: "LightGreen"
-  cheapestNegative: "LightBlue"
 ```
 
 and here is one for export rates:
@@ -78,59 +77,79 @@ type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
 currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
-cols: 3
-hour12: false
-showday: false
-showpast: false
 title: Octopus Export
-unitstr: p
-lowlimit: null
-mediumlimit: 10
-highlimit: 19
-roundUnits: 2
-cheapest: true
-multiplier: 100
-exportrates: true
+display:
+  cols: 3
+  hour12: false
+  showday: false
+  showpast: false
+  unitstr: p
+  roundUnits: 2
+  multiplier: 100
+limits:
+  medium: 0.10
+  high: 0.19
 colours:
   negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
   highest: "red"
-  cheapest: "LightGreen"
-  cheapestNegative: "LightBlue"
 ```
 
 Here's a breakdown of all the available configuration items:
 
-| Name                       | Optional | Default       | Description                                                                                                                                                                                                                                                                                      |
-| -------------------------- | -------- | ------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| currentEntity              | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                              |
-| pastEntity                 | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                                 |
-| futureEntity               | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                                                                                                                                                               |
-| targetTimesEntities        | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                                       |
-| cols                       | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                                                                                                                                                                |
-| showpast                   | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                                                                                                                                                                |
-| showday                    | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display                                                                                                                                             |
-| title                      | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                                                                                                                                                                           |
-| lowlimit                   | Y        | 5 (pence)     | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates)                                                                                                                                                                                |
-| mediumlimit                | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                                                                                                                                                                    |
-| highlimit                  | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                                                                                                                                                                        |
-| limitEntity                | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored                                                                                                                          |
-| highLimitMultiplier        | Y        | 1.1           | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                                                                                                                                                                          |
-| mediumLimitMultiplier      | Y        | 0.8           | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                                                                                                                                                                           |
-| roundUnits                 | Y        | 2             | Controls how many decimal places to round the rates to                                                                                                                                                                                                                                           |
-| showunits                  | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                                                                                                                                                                         |
-| unitstr                    | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                                                                                                                                                                   |
-| exportrates                | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                                                                                                                                                                         |
-| hour12                     | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                                                                                                                                                                        |
-| cheapest                   | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                                                                                                                                                                       |
-| combinerate                | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                                                                                                                                                                    |
-| multiplier                 | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                                                                                                                                                               |
-| rateListLimit              | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                                                                                                                                                                              |
-| cardRefreshIntervalSeconds | Y        | 60            | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                                                                                                                                                                          |
-| additionalDynamicLimits    | Y        | N/A           | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The colour specified here takes precedence compared to the one in `targetTimesEntities`. |
-| colours                    | Y        | See below     | Custom colour configuration for different rate levels                                                                                                                                                                                                                                            |
+| Name          | Optional | Default                | Description                                                                                                                         |
+| ------------- | -------- | ---------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| currentEntity | N        | N/A                    | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration |
+| pastEntity    | Y        | N/A                    | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration    |
+| futureEntity  | Y        | N/A                    | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration  |
+| title         | Y        | "Octopus Energy Rates" | The title of the card in the dashboard                                                                                              |
+| display       | Y        | See below              | Object containing display-related configuration                                                                                     |
+| limits        | Y        | See below              | Object containing rate limit configurations                                                                                         |
+| colours       | Y        | See below              | Object containing colour configurations for different rate levels                                                                   |
+
+### Display Configuration
+
+The `display` configuration allows you to customize how the rates are displayed. Here's the default configuration:
+
+```yaml
+display:
+  cols: 1
+  showpast: false
+  showday: true
+  hour12: true
+  roundUnits: 2
+  unitstr: "p/kWh"
+  multiplier: 100
+```
+
+| Name       | Optional | Default | Description                                                                   |
+| ---------- | -------- | ------- | :---------------------------------------------------------------------------- |
+| cols       | Y        | 1       | How many columns to break the rates into                                      |
+| showpast   | Y        | false   | Show rates that have already happened today                                   |
+| showday    | Y        | true    | Shows the (short) day of the week next to the time for each rate              |
+| hour12     | Y        | true    | Show times in 12-hour format if `true`, and 24-hour format if `false`         |
+| roundUnits | Y        | 2       | Controls how many decimal places to round the rates to                        |
+| unitstr    | Y        | "p/kWh" | The unit to show after the rate in the table. Set to an empty string for none |
+| multiplier | Y        | 100     | Multiply rate values for pence (100) or pounds (1)                            |
+
+### Limits Configuration
+
+The `limits` configuration allows you to set thresholds for different rate levels. Here's the default configuration:
+
+```yaml
+limits:
+  low: 0.15
+  medium: 0.25
+  high: 0.35
+```
+
+| Name   | Optional | Default | Description                           |
+| ------ | -------- | ------- | :------------------------------------ |
+| low    | Y        | 0.15    | Threshold for low rates (in £/kWh)    |
+| medium | Y        | 0.25    | Threshold for medium rates (in £/kWh) |
+| high   | Y        | 0.35    | Threshold for high rates (in £/kWh)   |
 
 ### Colour Configuration
 
@@ -138,26 +157,13 @@ The `colours` configuration allows you to customize the colours used for differe
 
 ```yaml
 colours:
-  negative: "#391CD9"
   low: "MediumSeaGreen"
   medium: "orange"
   high: "Tomato"
   highest: "red"
-  cheapest: "LightGreen"
-  cheapestNegative: "LightBlue"
 ```
 
-You can override any of these colours in your configuration. colours can be specified using colour names (e.g., 'red', 'blue') or hexadecimal colour codes (e.g., '#FF0000', '#0000FF').
-
-Here's what each colour represents:
-
-- `negative`: Used for plunge pricing (rates below 0)
-- `low`: Used for rates below `lowlimit` and 0
-- `medium`: Used for rates between `lowlimit` and `mediumlimit`
-- `high`: Used for rates between `mediumlimit` and `highlimit`
-- `highest`: Used for rates above `highlimit`
-- `cheapest`: Used to highlight the cheapest positive rate when `cheapest: true`
-- `cheapestNegative`: Used to highlight the cheapest negative rate when `cheapest: true`
+You can override any of these colours in your configuration. Colours can be specified using colour names (e.g., 'red', 'blue') or hexadecimal colour codes (e.g., '#FF0000', '#0000FF').
 
 ## Screenshots
 
