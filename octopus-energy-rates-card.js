@@ -18,18 +18,20 @@ class OctopusEnergyRatesCard extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.currentEntity) {
-      throw new Error("You need to define a currentEntity");
+    if (!config.entities || !config.entities.current) {
+      throw new Error("You need to define a current entity");
     }
-    this._config = { ...this.getDefaultConfig(), ...config };
+    this._config = { ...OctopusEnergyRatesCard.getDefaultConfig(), ...config };
   }
 
-  getDefaultConfig() {
+  static getDefaultConfig() {
     return {
-      currentEntity: "",
-      pastEntity: "",
-      futureEntity: "",
       title: "Octopus Energy Rates",
+      entities: {
+        current: "",
+        past: "",
+        future: "",
+      },
       display: {
         cols: 1,
         showpast: false,
@@ -56,8 +58,12 @@ class OctopusEnergyRatesCard extends LitElement {
 
   static getStubConfig() {
     return {
-      currentEntity: "",
       title: "Octopus Energy Rates",
+      entities: {
+        current: "",
+        past: "",
+        future: "",
+      },
       display: {
         cols: 1,
         showpast: false,
@@ -119,23 +125,25 @@ class OctopusEnergyRatesCard extends LitElement {
       return html``;
     }
 
-    const { currentEntity, pastEntity, futureEntity } = this._config;
-    const currentStateObj = this.hass.states[currentEntity];
-    const pastStateObj = pastEntity ? this.hass.states[pastEntity] : null;
-    const futureStateObj = futureEntity ? this.hass.states[futureEntity] : null;
+    const { current, past, future } = this._config.entities;
+    const currentStateObj = this.hass.states[current];
+    const pastStateObj = past ? this.hass.states[past] : null;
+    const futureStateObj = future ? this.hass.states[future] : null;
 
     if (!currentStateObj) {
       return html`
         <ha-card header="${this._config.title}">
-          <div class="card-content">Entity not found: ${currentEntity}</div>
+          <div class="card-content">Current entity not found: ${current}</div>
         </ha-card>
       `;
     }
 
-    const currentRates = currentStateObj.attributes.rates || [];
-    const pastRates = pastStateObj ? pastStateObj.attributes.rates || [] : [];
+    const currentRates = this.getRatesFromStateObj(currentStateObj);
+    const pastRates = pastStateObj
+      ? this.getRatesFromStateObj(pastStateObj)
+      : [];
     const futureRates = futureStateObj
-      ? futureStateObj.attributes.rates || []
+      ? this.getRatesFromStateObj(futureStateObj)
       : [];
 
     const allRates = [...pastRates, ...currentRates, ...futureRates];
@@ -151,6 +159,19 @@ class OctopusEnergyRatesCard extends LitElement {
         </div>
       </ha-card>
     `;
+  }
+
+  getRatesFromStateObj(stateObj) {
+    if (stateObj.attributes && Array.isArray(stateObj.attributes.rates)) {
+      return stateObj.attributes.rates;
+    } else if (
+      stateObj.attributes &&
+      typeof stateObj.attributes.rates === "object"
+    ) {
+      // Handle case where rates might be an object instead of an array
+      return Object.values(stateObj.attributes.rates);
+    }
+    return [];
   }
 
   getFilteredRates(rates) {
@@ -232,7 +253,7 @@ class OctopusEnergyRatesCardEditor extends LitElement {
   }
 
   setConfig(config) {
-    this._config = { ...OctopusEnergyRatesCard.getStubConfig(), ...config };
+    this._config = { ...OctopusEnergyRatesCard.getDefaultConfig(), ...config };
   }
 
   render() {
@@ -247,24 +268,31 @@ class OctopusEnergyRatesCardEditor extends LitElement {
         .schema=${[
           { name: "title", selector: { text: {} } },
           {
-            name: "currentEntity",
-            selector: { entity: {} },
-            required: true,
-          },
-          {
-            name: "pastEntity",
-            selector: { entity: {} },
-          },
-          {
-            name: "futureEntity",
-            selector: { entity: {} },
+            type: "expandable",
+            name: "entities",
+            title: "Entities",
+            icon: "mdi:lightning-bolt",
+            schema: [
+              {
+                name: "current",
+                selector: { entity: {} },
+                required: true,
+              },
+              {
+                name: "past",
+                selector: { entity: {} },
+              },
+              {
+                name: "future",
+                selector: { entity: {} },
+              },
+            ],
           },
           {
             type: "expandable",
             name: "display",
             title: "Display Options",
-            iconPath:
-              "M16,20L20,20L20,16L16,16L16,20M16,14L20,14L20,10L16,10L16,14M10,8L14,8L14,4L10,4L10,8M16,8L20,8L20,4L16,4L16,8M10,14L14,14L14,10L10,10L10,14M4,14L8,14L8,10L4,10L4,14M4,20L8,20L8,16L4,16L4,20M10,20L14,20L14,16L10,16L10,20M4,8L8,8L8,4L4,4L4,8Z",
+            icon: "mdi:eye",
             schema: [
               { name: "cols", selector: { number: { min: 1, max: 5 } } },
               { name: "showpast", selector: { boolean: {} } },
@@ -272,14 +300,17 @@ class OctopusEnergyRatesCardEditor extends LitElement {
               { name: "hour12", selector: { boolean: {} } },
               { name: "roundUnits", selector: { number: { min: 0, max: 3 } } },
               { name: "unitstr", selector: { text: {} } },
+              {
+                name: "multiplier",
+                selector: { number: { min: 1, max: 100 } },
+              },
             ],
           },
           {
             type: "expandable",
             name: "limits",
             title: "Rate Limits",
-            iconPath:
-              "M16,20L20,20L20,16L16,16L16,20M16,14L20,14L20,10L16,10L16,14M10,8L14,8L14,4L10,4L10,8M16,8L20,8L20,4L16,4L16,8M10,14L14,14L14,10L10,10L10,14M4,14L8,14L8,10L4,10L4,14M4,20L8,20L8,16L4,16L4,20M10,20L14,20L14,16L10,16L10,20M4,8L8,8L8,4L4,4L4,8Z",
+            icon: "mdi:chart-line",
             schema: [
               {
                 name: "low",
@@ -307,7 +338,7 @@ class OctopusEnergyRatesCardEditor extends LitElement {
               {
                 name: "negative",
                 selector: { text: {} },
-                label: "Negative Colour",
+                label: "Negative Rate Color (name or hex)",
               },
               {
                 name: "low",
