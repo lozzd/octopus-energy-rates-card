@@ -27,6 +27,8 @@ class OctopusEnergyRatesCard extends LitElement {
   getDefaultConfig() {
     return {
       currentEntity: "",
+      pastEntity: "",
+      futureEntity: "",
       title: "Octopus Energy Rates",
       display: {
         cols: 1,
@@ -38,6 +40,7 @@ class OctopusEnergyRatesCard extends LitElement {
         multiplier: 100,
       },
       colours: {
+        negative: "#391CD9",
         low: "MediumSeaGreen",
         medium: "orange",
         high: "Tomato",
@@ -116,19 +119,27 @@ class OctopusEnergyRatesCard extends LitElement {
       return html``;
     }
 
-    const entityId = this._config.currentEntity;
-    const stateObj = this.hass.states[entityId];
+    const { currentEntity, pastEntity, futureEntity } = this._config;
+    const currentStateObj = this.hass.states[currentEntity];
+    const pastStateObj = pastEntity ? this.hass.states[pastEntity] : null;
+    const futureStateObj = futureEntity ? this.hass.states[futureEntity] : null;
 
-    if (!stateObj) {
+    if (!currentStateObj) {
       return html`
         <ha-card header="${this._config.title}">
-          <div class="card-content">Entity not found: ${entityId}</div>
+          <div class="card-content">Entity not found: ${currentEntity}</div>
         </ha-card>
       `;
     }
 
-    const rates = stateObj.attributes.rates || [];
-    const filteredRates = this.getFilteredRates(rates);
+    const currentRates = currentStateObj.attributes.rates || [];
+    const pastRates = pastStateObj ? pastStateObj.attributes.rates || [] : [];
+    const futureRates = futureStateObj
+      ? futureStateObj.attributes.rates || []
+      : [];
+
+    const allRates = [...pastRates, ...currentRates, ...futureRates];
+    const filteredRates = this.getFilteredRates(allRates);
     const columns = this.splitIntoColumns(filteredRates);
 
     return html`
@@ -145,10 +156,12 @@ class OctopusEnergyRatesCard extends LitElement {
   getFilteredRates(rates) {
     const { showpast } = this._config.display;
     const now = new Date();
-    return rates.filter((rate) => {
-      const rateDate = new Date(rate.start);
-      return showpast || rateDate > now;
-    });
+    return rates
+      .filter((rate) => {
+        const rateDate = new Date(rate.start);
+        return showpast || rateDate > now;
+      })
+      .sort((a, b) => new Date(a.start) - new Date(b.start)); // Sort rates by start time
   }
 
   splitIntoColumns(rates) {
@@ -198,6 +211,7 @@ class OctopusEnergyRatesCard extends LitElement {
 
   getRateColor(rate) {
     const { colours, limits } = this._config;
+    if (rate < 0) return colours.negative || "#391CD9"; // Default to a dark blue if negative color is not set
     if (rate <= limits.low) return colours.low;
     if (rate <= limits.medium) return colours.medium;
     if (rate <= limits.high) return colours.high;
@@ -232,7 +246,19 @@ class OctopusEnergyRatesCardEditor extends LitElement {
         .data=${this._config}
         .schema=${[
           { name: "title", selector: { text: {} } },
-          { name: "currentEntity", selector: { entity: {} } },
+          {
+            name: "currentEntity",
+            selector: { entity: {} },
+            required: true,
+          },
+          {
+            name: "pastEntity",
+            selector: { entity: {} },
+          },
+          {
+            name: "futureEntity",
+            selector: { entity: {} },
+          },
           {
             type: "expandable",
             name: "display",
