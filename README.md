@@ -1,11 +1,8 @@
-# Lovelace custom card for Octopus Energy Rate display
+# Lovelace Custom Card for Octopus Energy Rate Display
 
-This is a fork of the original [Octopus Energy Card by Lozzd](https://github.com/lozzd/octopus-energy-rates-card). I should point out that I've made a few improvements, but don't think I'll maintain or
-improve the card much further than this.
+This custom Lovelace card for Home Assistant displays Octopus Energy rate prices for each 30-minute slot. It pulls data from sensors provided by the [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration, offering a convenient, at-a-glance view of prices for tariffs that change every 30 minutes, such as Octopus Agile.
 
-This lovelace card displays the Octopus Energy rate prices per each 30 minute slot, pulling the data from sensors of the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration.
-
-This provides a convenient, at-a-glance way to observe the prices on tariffs that change their price every 30 minutes, for example Octopus Agile.
+![screenshot_1](assets/screenshot.png)
 
 ## Installation
 
@@ -26,30 +23,34 @@ In the Home Assistant UI:
 
 This should automatically configure all the resources, so you can now skip to **Configuration**.
 
-### Manually
+### Manual Installation
 
-You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
-Settings -> Dashboards -> Top Right Menu -> Resources
+1. Download the `octopus-energy-rates-card.js` file.
+2. Copy it to `$homeassistant_config_dir/www/community/`.
+3. Add the JavaScript file to Lovelace resources:
+   - Go to Settings -> Dashboards -> Resources
+   - Add `/local/community/octopus-energy-rates-card.js` as a JavaScript module.
 
 ## Configuration
 
 Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates Card**.
 
-You'll need to then configure the yaml yourself - the `type` part is filled out for you.
-
-The only **required** key is the current entity under the `entities` section. This should be the name of the entity sensor that contains the current rates. At least one of the "current", "past" or "future" day rate entities will need to be selected.
-
-As of version 9.0.0 of the Octopus Energy integration, these entities are now called `events` and not enabled by default. In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
-
-The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`.
-
-(The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
-
-Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above:
+### Basic Configuration
 
 ```yaml
 type: custom:octopus-energy-rates-card
-title: Octopus Import
+title: Octopus Energy Rates
+entities:
+  current: event.octopus_energy_electricity_<your_id_here>_current_day_rates
+  past: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
+  future: event.octopus_energy_electricity_<your_id_here>_next_day_rates
+```
+
+### Full Configuration Options
+
+```yaml
+type: custom:octopus-energy-rates-card
+title: Octopus Energy Rates
 entities:
   current: event.octopus_energy_electricity_<your_id_here>_current_day_rates
   past: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
@@ -59,7 +60,7 @@ display:
   hour12: false
   showday: true
   showpast: false
-  unitstr: p
+  unitstr: "p/KWh"
   roundUnits: 2
   multiplier: 100
 limits:
@@ -72,215 +73,69 @@ colours:
   medium: "orange"
   high: "Tomato"
   highest: "red"
+targetTimes:
+  - entity: binary_sensor.example_target_time
+    backgroundColor: "lightblue"
+    prefix: "mdi:clock"
 ```
 
-and here is one for export rates:
+### Configuration Options
 
-```yaml
-type: custom:octopus-energy-rates-card
-title: Octopus Export
-entities:
-  current: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
-  past: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
-  future: event.octopus_energy_electricity_<your_id_here>_export_next_day_rates
-display:
-  cols: 3
-  hour12: false
-  showday: false
-  showpast: false
-  unitstr: p
-  roundUnits: 2
-  multiplier: 100
-limits:
-  medium: 0.10
-  high: 0.19
-colours:
-  negative: "#391CD9"
-  low: "MediumSeaGreen"
-  medium: "orange"
-  high: "Tomato"
-  highest: "red"
-```
+| Option        | Type   | Default                                 | Description                                    |
+| ------------- | ------ | --------------------------------------- | ---------------------------------------------- |
+| `title`       | string | "Octopus Energy Rates"                  | Card title                                     |
+| `entities`    | object | [See here](#entities-configuration)     | Entity IDs for current, past, and future rates |
+| `display`     | object | [See here](#display-configuration)      | Display settings                               |
+| `limits`      | object | [See here](#limits-configuration)       | Rate thresholds                                |
+| `colours`     | object | [See here](#colours-configuration)      | Colors for different rate levels               |
+| `targetTimes` | array  | [See here](#target-times-configuration) | Target time configurations                     |
 
-Here's a breakdown of all the available configuration items:
+#### Entities Configuration
 
-| Name     | Optional | Default                | Description                                                       |
-| -------- | -------- | ---------------------- | :---------------------------------------------------------------- |
-| title    | Y        | "Octopus Energy Rates" | The title of the card in the dashboard                            |
-| entities | N        | N/A                    | Object containing entity IDs for current, past, and future rates  |
-| display  | Y        | See below              | Object containing display-related configuration                   |
-| limits   | Y        | See below              | Object containing rate limit configurations                       |
-| colours  | Y        | See below              | Object containing colour configurations for different rate levels |
+| Option    | Type   | Required | Description                 |
+| --------- | ------ | -------- | --------------------------- |
+| `current` | string | Yes      | Entity ID for current rates |
+| `past`    | string | No       | Entity ID for past rates    |
+| `future`  | string | No       | Entity ID for future rates  |
 
-### Entities Configuration
+#### Display Configuration
 
-The `entities` configuration allows you to specify the entities for current, past, and future rates. Here's the default configuration:
+| Option       | Type    | Default | Description              |
+| ------------ | ------- | ------- | ------------------------ |
+| `cols`       | number  | 1       | Number of columns        |
+| `showpast`   | boolean | false   | Show past rates          |
+| `showday`    | boolean | true    | Show day of the week     |
+| `hour12`     | boolean | true    | Use 12-hour format       |
+| `roundUnits` | number  | 2       | Decimal places for rates |
+| `unitstr`    | string  | "p/kWh" | Unit string              |
+| `multiplier` | number  | 100     | Rate multiplier          |
 
-```yaml
-entities:
-  current: "" # Required
-  past: "" # Optional
-  future: "" # Optional
-```
+#### Limits Configuration
 
-| Name    | Optional | Default | Description                            |
-| ------- | -------- | ------- | :------------------------------------- |
-| current | N        | N/A     | Entity ID for current rates (required) |
-| past    | Y        | ""      | Entity ID for past rates               |
-| future  | Y        | ""      | Entity ID for future rates             |
+| Option   | Type   | Default | Description                |
+| -------- | ------ | ------- | -------------------------- |
+| `low`    | number | 0.15    | Threshold for low rates    |
+| `medium` | number | 0.25    | Threshold for medium rates |
+| `high`   | number | 0.35    | Threshold for high rates   |
 
-### Display Configuration
+#### Colours Configuration
 
-The `display` configuration allows you to customize how the rates are displayed. Here's the default configuration:
+| Option     | Type   | Default          | Description              |
+| ---------- | ------ | ---------------- | ------------------------ |
+| `negative` | string | "#391CD9"        | Color for negative rates |
+| `low`      | string | "MediumSeaGreen" | Color for low rates      |
+| `medium`   | string | "orange"         | Color for medium rates   |
+| `high`     | string | "Tomato"         | Color for high rates     |
+| `highest`  | string | "red"            | Color for highest rates  |
 
-```yaml
-display:
-  cols: 1
-  showpast: false
-  showday: true
-  hour12: true
-  roundUnits: 2
-  unitstr: "p/kWh"
-  multiplier: 100
-```
+#### Target Times Configuration
 
-| Name       | Optional | Default | Description                                                                   |
-| ---------- | -------- | ------- | :---------------------------------------------------------------------------- |
-| cols       | Y        | 1       | How many columns to break the rates into                                      |
-| showpast   | Y        | false   | Show rates that have already happened today                                   |
-| showday    | Y        | true    | Shows the (short) day of the week next to the time for each rate              |
-| hour12     | Y        | true    | Show times in 12-hour format if `true`, and 24-hour format if `false`         |
-| roundUnits | Y        | 2       | Controls how many decimal places to round the rates to                        |
-| unitstr    | Y        | "p/kWh" | The unit to show after the rate in the table. Set to an empty string for none |
-| multiplier | Y        | 100     | Multiply rate values for pence (100) or pounds (1)                            |
+| Option            | Type   | Description                      |
+| ----------------- | ------ | -------------------------------- |
+| `entity`          | string | Entity ID for target time        |
+| `backgroundColor` | string | Background color for target time |
+| `prefix`          | string | Icon prefix for target time      |
 
-### Limits Configuration
+## Acknowledgements
 
-The `limits` configuration allows you to set thresholds for different rate levels. Here's the default configuration:
-
-```yaml
-limits:
-  low: 0.15
-  medium: 0.25
-  high: 0.35
-```
-
-| Name   | Optional | Default | Description                           |
-| ------ | -------- | ------- | :------------------------------------ |
-| low    | Y        | 0.15    | Threshold for low rates (in £/kWh)    |
-| medium | Y        | 0.25    | Threshold for medium rates (in £/kWh) |
-| high   | Y        | 0.35    | Threshold for high rates (in £/kWh)   |
-
-### Colour Configuration
-
-The `colours` configuration allows you to customize the colours used for different rate levels. Here's the default colour configuration:
-
-```yaml
-colours:
-  negative: "#391CD9"
-  low: "MediumSeaGreen"
-  medium: "orange"
-  high: "Tomato"
-  highest: "red"
-```
-
-You can override any of these colours in your configuration. Colours can be specified using colour names (e.g., 'red', 'blue') or hexadecimal colour codes (e.g., '#FF0000', '#0000FF').
-
-## Screenshots
-
-![screenshot_1](assets/import.png)
-![screenshot_2](assets/export.png)
-
-## Advanced Configurations
-
-Import rates with the Target Rates and future rates entities specified:
-
-```yaml
-type: custom:octopus-energy-rates-card
-title: Octopus Import - p/kWh
-entities:
-  current: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-  future: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-targetTimesEntities:
-  binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
-display:
-  cols: 3
-  hour12: false
-  showday: false
-  showpast: false
-  unitstr: ""
-  roundUnits: 2
-  multiplier: 100
-limits:
-  low: 0.06
-  medium: 0.15
-  high: 0.27
-colours:
-  negative: "#391CD9"
-  low: "MediumSeaGreen"
-  medium: "orange"
-  high: "Tomato"
-  highest: "red"
-cheapest: true
-```
-
-![screenshot_3](assets/import_with_target.png)
-
-Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card. It also contains an example for `additionalDynamicLimits` property to highlight when a specific threshold is reached.
-
-```yaml
-type: custom:octopus-energy-rates-card
-title: Octopus Import
-entities:
-  current: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-  past: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
-  future: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-display:
-  cols: 2
-  showday: true
-  showpast: false
-  hour12: true
-  roundUnits: 2
-  unitstr: p/kWh
-  multiplier: 100
-limits:
-  low: 0.20
-  medium: 0.20
-  high: 0.30
-colours:
-  negative: "#391CD9"
-  low: "MediumSeaGreen"
-  medium: "orange"
-  high: "Tomato"
-  highest: "red"
-cheapest: false
-additionalDynamicLimits:
-  input_number.threshold_turn_on_air_conditioning:
-    backgroundColour: DarkOliveGreen
-    prefix: 💰
-targetTimesEntities:
-  binary_sensor.octopus_energy_target_intermittent_best_2h_rates:
-    backgroundColour: orange
-    prefix: ♨️
-  binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
-    backgroundColour: navy
-    prefix: 💧
-```
-
-Each entity contains the following optional properties with their default values:
-
-```yaml
-backgroundColour: navy
-```
-
-For all possible `backgroundColour` combinations, please have a look at the [valid HTML colour names](https://www.w3schools.com/colors/colors_names.asp).
-
-If you're interested in finding emojis for `prefix`, you might find it easiest to look at [Emojipedia](https://emojipedia.org/).
-
-You can see how the above configuration looks like in the screenshot below:
-
-![screenshot_2](assets/screenshot_2.png)
-
-#### Thanks/inspiration
-
-This card was based on and reworked from the code [markgdev/home-assistant_OctopusAgile](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards) which is no longer maintained.
+This card is based on the work of [Lozzd's Octopus Energy Card](https://github.com/lozzd/octopus-energy-rates-card) and [markgdev's OctopusAgile card](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards).
