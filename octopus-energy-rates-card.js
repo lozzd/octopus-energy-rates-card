@@ -53,6 +53,7 @@ class OctopusEnergyRatesCard extends LitElement {
         medium: 0.25,
         high: 0.35,
       },
+      targetTimes: [],
     };
   }
 
@@ -210,6 +211,7 @@ class OctopusEnergyRatesCard extends LitElement {
     const { hour12, showday, unitstr, roundUnits, multiplier } =
       this._config.display;
     const startDate = new Date(rate.start);
+    const endDate = new Date(rate.end);
     const formattedTime = startDate.toLocaleTimeString(navigator.language, {
       hour: "numeric",
       minute: "2-digit",
@@ -222,21 +224,48 @@ class OctopusEnergyRatesCard extends LitElement {
     const rateValue = (rate.value_inc_vat * multiplier).toFixed(roundUnits);
     const color = this.getRateColor(rate.value_inc_vat);
 
+    const targetTime = this.getTargetTime(startDate, endDate);
+
+    const style = targetTime
+      ? `background-color: ${color}; border-color: ${targetTime.backgroundColor};`
+      : `background-color: ${color}; border-color: ${color};`;
+
+    const prefix = targetTime ? targetTime.prefix : "";
+
     return html`
       <tr>
         <td
-          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1;"
+          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1; text-align:right; padding-right:2rem;"
         >
+          ${prefix ? html`<ha-icon icon="${prefix}"></ha-icon>` : ""}
           ${formattedDay}${formattedTime}
         </td>
-        <td
-          class="rate"
-          style="background-color: ${color}; border-color: ${color}"
-        >
-          ${rateValue}${unitstr}
-        </td>
+        <td class="rate" style="${style}">${rateValue}${unitstr}</td>
       </tr>
     `;
+  }
+
+  getTargetTime(start, end) {
+    for (const tt of this._config.targetTimes) {
+      const entityState = this.hass.states[tt.entity];
+
+      if (entityState && entityState.attributes.target_times) {
+        const targetTimes = entityState.attributes.target_times;
+
+        for (const targetTime of targetTimes) {
+          const targetStart = new Date(targetTime.start);
+          const targetEnd = new Date(targetTime.end);
+
+          if (start >= targetStart && end <= targetEnd) {
+            return {
+              backgroundColor: tt.backgroundColor,
+              prefix: tt.prefix,
+            };
+          }
+        }
+      }
+    }
+    return null;
   }
 
   getRateColor(rate) {
@@ -468,7 +497,39 @@ class OctopusEnergyRatesCardEditor extends LitElement {
     this._valueChanged();
   }
 
-  _valueChanged() {
+  _valueChanged(ev) {
+    if (ev) {
+      // This handles changes from ha-form
+      this._config = { ...this._config, ...ev.detail.value };
+    }
+
+    const newConfig = { ...this._config };
+
+    // Ensure nested objects are properly updated
+    if (ev && ev.detail.value.entities) {
+      newConfig.entities = {
+        ...this._config.entities,
+        ...ev.detail.value.entities,
+      };
+    }
+    if (ev && ev.detail.value.display) {
+      newConfig.display = {
+        ...this._config.display,
+        ...ev.detail.value.display,
+      };
+    }
+    if (ev && ev.detail.value.limits) {
+      newConfig.limits = { ...this._config.limits, ...ev.detail.value.limits };
+    }
+    if (ev && ev.detail.value.colours) {
+      newConfig.colours = {
+        ...this._config.colours,
+        ...ev.detail.value.colours,
+      };
+    }
+
+    this._config = newConfig;
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
