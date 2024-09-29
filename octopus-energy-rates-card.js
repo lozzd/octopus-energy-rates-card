@@ -226,16 +226,14 @@ class OctopusEnergyRatesCard extends LitElement {
 
     const targetTime = this.getTargetTime(startDate, endDate);
 
-    const style = targetTime
-      ? `background-color: ${color}; border-color: ${targetTime.backgroundColor};`
-      : `background-color: ${color}; border-color: ${color};`;
+    const style = `background-color: ${color}; border-color: ${color};`;
 
     const prefix = targetTime ? targetTime.prefix : "";
 
     return html`
       <tr>
         <td
-          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1; text-align:right; padding-right:2rem;"
+          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1; text-align:right; padding-right:1rem;"
         >
           ${prefix ? html`<ha-icon icon="${prefix}"></ha-icon>` : ""}
           ${formattedDay}${formattedTime}
@@ -354,7 +352,7 @@ class OctopusEnergyRatesCardEditor extends LitElement {
             title: "Display Options",
             icon: "mdi:eye",
             schema: [
-              { name: "cols", selector: { number: { min: 1, max: 5 } } },
+              { name: "cols", selector: { number: { min: 1, max: 3 } } },
               { name: "showpast", selector: { boolean: {} } },
               { name: "showday", selector: { boolean: {} } },
               { name: "hour12", selector: { boolean: {} } },
