@@ -68,13 +68,14 @@ class OctopusEnergyRatesCard extends LitElement {
       display: {
         cols: 1,
         showpast: false,
-        showday: true,
-        hour12: true,
-        roundUnits: 2,
+        showday: false,
+        hour12: false,
+        roundUnits: 1,
         unitstr: "p/kWh",
         multiplier: 100,
       },
       colours: {
+        negative: "#391CD9",
         low: "#4CAF50", // MediumSeaGreen
         medium: "#FFA500", // Orange
         high: "#FF6347", // Tomato
@@ -333,16 +334,19 @@ class OctopusEnergyRatesCardEditor extends LitElement {
             schema: [
               {
                 name: "current",
-                selector: { entity: {} },
+                label: "Current Rates Entity",
+                selector: { entity: { filter: { domain: "event" } } },
                 required: true,
               },
               {
                 name: "past",
-                selector: { entity: {} },
+                label: "Past Rates Entity",
+                selector: { entity: { filter: { domain: "event" } } },
               },
               {
                 name: "future",
-                selector: { entity: {} },
+                label: "Future Rates Entity",
+                selector: { entity: { filter: { domain: "event" } } },
               },
             ],
           },
@@ -352,7 +356,11 @@ class OctopusEnergyRatesCardEditor extends LitElement {
             title: "Display Options",
             icon: "mdi:eye",
             schema: [
-              { name: "cols", selector: { number: { min: 1, max: 3 } } },
+              {
+                name: "cols",
+                label: "Columns",
+                selector: { number: { min: 1, max: 3 } },
+              },
               { name: "showpast", selector: { boolean: {} } },
               { name: "showday", selector: { boolean: {} } },
               { name: "hour12", selector: { boolean: {} } },
