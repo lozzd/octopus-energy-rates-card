@@ -38,7 +38,7 @@ class OctopusEnergyRatesCard extends LitElement {
         showday: true,
         hour12: true,
         roundUnits: 2,
-        unitstr: "p/kWh",
+        unitstr: "",
         multiplier: 100,
       },
       colours: {
@@ -71,7 +71,7 @@ class OctopusEnergyRatesCard extends LitElement {
         showday: false,
         hour12: false,
         roundUnits: 1,
-        unitstr: "p/kWh",
+        unitstr: "",
         multiplier: 100,
       },
       colours: {
@@ -211,30 +211,35 @@ class OctopusEnergyRatesCard extends LitElement {
   renderRateRow(rate) {
     const { hour12, showday, unitstr, roundUnits, multiplier } =
       this._config.display;
+
     const startDate = new Date(rate.start);
     const endDate = new Date(rate.end);
+
     const formattedTime = startDate.toLocaleTimeString(navigator.language, {
       hour: "numeric",
       minute: "2-digit",
       hour12,
     });
+
     const formattedDay = showday
       ? startDate.toLocaleDateString(navigator.language, { weekday: "short" }) +
         " "
       : "";
     const rateValue = (rate.value_inc_vat * multiplier).toFixed(roundUnits);
+
     const color = this.getRateColor(rate.value_inc_vat);
+    const color_string = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
     const targetTime = this.getTargetTime(startDate, endDate);
 
-    const style = `background-color: ${color}; border-color: ${color};`;
+    const style = `background-color: ${color_string}; border-color: ${color_string};`;
 
     const prefix = targetTime ? targetTime.prefix : "";
 
     return html`
       <tr>
         <td
-          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1; text-align:right; padding-right:1rem;"
+          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color_string} 100%) 1; text-align:right; padding-right:1rem;"
         >
           ${prefix ? html`<ha-icon icon="${prefix}"></ha-icon>` : ""}
           ${formattedDay}${formattedTime}
@@ -325,7 +330,7 @@ class OctopusEnergyRatesCardEditor extends LitElement {
         .hass=${this.hass}
         .data=${this._config}
         .schema=${[
-          { name: "title", selector: { text: {} } },
+          { name: "title", label: "Card Title", selector: { text: {} } },
           {
             type: "expandable",
             name: "entities",
@@ -357,18 +362,41 @@ class OctopusEnergyRatesCardEditor extends LitElement {
             icon: "mdi:eye",
             schema: [
               {
-                name: "cols",
-                label: "Columns",
-                selector: { number: { min: 1, max: 3 } },
+                type: "grid",
+                columns: 2,
+                schema: [
+                  {
+                    name: "cols",
+                    label: "Columns",
+                    selector: { number: { min: 1, max: 3 } },
+                  },
+                  {
+                    name: "roundUnits",
+                    label: "Decimal places",
+                    selector: { number: { min: 0, max: 3, mode: "slider" } },
+                  },
+                ],
               },
-              { name: "showpast", selector: { boolean: {} } },
-              { name: "showday", selector: { boolean: {} } },
-              { name: "hour12", selector: { boolean: {} } },
-              { name: "roundUnits", selector: { number: { min: 0, max: 3 } } },
-              { name: "unitstr", selector: { text: {} } },
               {
-                name: "multiplier",
-                selector: { number: { min: 1, max: 100 } },
+                type: "grid",
+                columns: 3,
+                schema: [
+                  {
+                    name: "showpast",
+                    label: "Show Past",
+                    selector: { boolean: {} },
+                  },
+                  {
+                    name: "showday",
+                    label: "Day Label",
+                    selector: { boolean: {} },
+                  },
+                  {
+                    name: "hour12",
+                    label: "12hr Time?",
+                    selector: { boolean: {} },
+                  },
+                ],
               },
             ],
           },
@@ -402,29 +430,35 @@ class OctopusEnergyRatesCardEditor extends LitElement {
             icon: "mdi:palette",
             schema: [
               {
-                name: "negative",
-                selector: { text: {} },
-                label: "Negative Rate Color (name or hex)",
-              },
-              {
-                name: "low",
-                selector: { text: {} },
-                label: "Low Rate Color (name or hex)",
-              },
-              {
-                name: "medium",
-                selector: { text: {} },
-                label: "Medium Rate Color (name or hex)",
-              },
-              {
-                name: "high",
-                selector: { text: {} },
-                label: "High Rate Color (name or hex)",
-              },
-              {
-                name: "highest",
-                selector: { text: {} },
-                label: "Highest Rate Color (name or hex)",
+                type: "grid",
+                columns: 3,
+                schema: [
+                  {
+                    name: "negative",
+                    selector: { color_rgb: {} },
+                    label: "Negative Rate",
+                  },
+                  {
+                    name: "low",
+                    selector: { color_rgb: {} },
+                    label: "Low Rate",
+                  },
+                  {
+                    name: "medium",
+                    selector: { color_rgb: {} },
+                    label: "Medium Rate",
+                  },
+                  {
+                    name: "high",
+                    selector: { color_rgb: {} },
+                    label: "High Rate",
+                  },
+                  {
+                    name: "highest",
+                    selector: { color_rgb: {} },
+                    label: "Highest Rate",
+                  },
+                ],
               },
             ],
           },
