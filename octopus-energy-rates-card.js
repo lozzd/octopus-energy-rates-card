@@ -106,12 +106,14 @@ class OctopusEnergyRatesCard extends LitElement {
       }
       table {
         width: 100%;
-        border-spacing: 0;
+        border-spacing: 0 1px;
         border-collapse: separate;
       }
       td {
         padding: 4px;
         text-align: center;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
       }
       .rate {
         color: white;
@@ -222,8 +224,15 @@ class OctopusEnergyRatesCard extends LitElement {
 
     return html`
       <tr>
-        <td>${formattedDay}${formattedTime}</td>
-        <td class="rate" style="background-color: ${color}">
+        <td
+          style="border-image: linear-gradient(to right, var(--card-background-color) 20%, ${color} 100%) 1;"
+        >
+          ${formattedDay}${formattedTime}
+        </td>
+        <td
+          class="rate"
+          style="background-color: ${color}; border-color: ${color}"
+        >
           ${rateValue}${unitstr}
         </td>
       </tr>
