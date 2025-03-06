@@ -366,6 +366,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             if ((date - Date.parse(new Date()) > -1800000) && (date < new Date())) {
                 if (showpast) {
                     isCurrentTime = true;
+                    targetTimeBackgroundColor = "' style='background-color: gray;"; // Apply gray background
                 };
             };
 
