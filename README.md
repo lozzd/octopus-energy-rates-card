@@ -42,7 +42,7 @@ The easiest way to find that entity name is by opening the Search within Home As
 
 Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
 
-```
+```yaml
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 cols: 2
@@ -59,8 +59,9 @@ cheapest: true
 multiplier: 100
 
 ```
+
 and here is one for export rates:
-```
+```yaml
 type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
 currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
@@ -150,7 +151,7 @@ Note that it is possible for you to mix and match fixed values and entities as y
 ##### Advanced Configurations
 
 Import rates with the Target Rates and future rates entities specified:
-```
+```yaml
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
@@ -171,7 +172,7 @@ multiplier: 100
 ![screenshot_3](assets/import_with_target.png)
 
 Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card. It also contains an example for `additionalDynamicLimits` property to highlight when a specific threshold is reached.
-```
+```yaml
 type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
@@ -202,7 +203,7 @@ targetTimesEntities:
 ```
 
 Each entity contains the following optional properties with their default values:
-```
+```yaml
 backgroundColour: navy
 prefix:
 ```
