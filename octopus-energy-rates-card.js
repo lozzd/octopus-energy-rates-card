@@ -27,7 +27,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             td.current {
                 position: relative;
-            }    
+            }
             td.current:before{
                 content: "";
                 position: absolute;
@@ -53,12 +53,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 text-align:center;
                 width:80px;
             }
-            td.time {
-                text-align:center;
-                vertical-align:middle;
-            }
             td.target {
                 text-align: right;
+                vertical-align: middle;
+            }
+            td.time {
+                text-align:center;
                 vertical-align: middle;
             }
             td.time_red{
@@ -343,6 +343,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var isTargetTime = false;
             var targetTimeBackgroundColor = "";
             var targetTimePrefix = "";
+            var targetTimeDateTIme = "";
+            var targetTimeRate = "";
             // Check if the current time row corresponds to a target time
             allSlotsTargetTimes.forEach(function (targetTime) {
                 const startTime = new Date(targetTime.start);
@@ -384,8 +386,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
 
             if (showpast || (date - Date.parse(new Date()) > -1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='target " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + "<td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + date_locale + time_locale +
-                    "</td><td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+                targetTimePrefix = "<td class='target " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + "</td>";
+                targetTimeDateTIme = "<td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + date_locale + time_locale + "</td>";
+                targetTimeRate = "<td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td>";
+                table = table.concat("<tr class='rate_row'>" + targetTimePrefix + targetTimeDateTIme + targetTimeRate + "</tr>");
 
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
