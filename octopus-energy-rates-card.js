@@ -36,8 +36,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 width: 0; 
                 height: 0; 
                 display: block;
-                border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
-                border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
+                border-top: calc(var(--ha-font-size-l) * .65) solid transparent;
+                border-bottom: calc(var(--ha-font-size-l) * .65) solid transparent;
 
                 border-right: 10px solid;
             }
@@ -367,6 +367,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             if ((date - Date.parse(new Date()) > -1800000) && (date < new Date())) {
                 if (showpast) {
                     isCurrentTime = true;
+                    targetTimeBackgroundColor = "' style='background-color: gray;"; // Apply gray background
                 };
             };
 
