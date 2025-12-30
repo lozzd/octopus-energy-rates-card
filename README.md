@@ -45,7 +45,6 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 ```
 type: custom:octopus-energy-rates-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-cols: 2
 hour12: false
 showday: true
 showpast: false
@@ -65,7 +64,6 @@ type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
 currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
-cols: 3
 hour12: false
 showday: false
 showpast: false
@@ -88,7 +86,11 @@ Here's a breakdown of all the available configuration items:
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
 | targetTimesEntities  | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                  |
-| cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
+| layoutOrientation  | Y   | "vertical"    | `vertical` fills columns top-to-bottom then left-to-right. `horizontal` fills rows left-to-right, wrapping when out of space.                        |
+| layoutOrder   | Y        | "asc"         | `asc` shows most recent rates first, `desc` shows oldest rates first.                                                                                |
+| layoutSections| Y        | N/A           | Number of sections to span across for section-based dashboards (12 columns per section unit). Minimum: 1. Can be specified as `full` for max width   |
+| layoutColumns | Y        | N/A           | Finer grained number of columns to span across for section-based dashboards. Takes priority over layoutSections. Minimum: 5.  Can be specified as `full` for max width |
+| cols          | Y        | N/A           | How many columns to break the rates into, applies to both section and masonry dashboards. Best used to reduce columns rather than increase as contents can overflow card     |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
@@ -96,8 +98,8 @@ Here's a breakdown of all the available configuration items:
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | limitEntity   | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored|
-| highLimitMultiplier   | Y  | 1.1         | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                             |
-| mediumLimitMultiplier | Y  | 0.8         | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                              |
+| highLimitMultiplier   | Y  | 1.1         | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                              |
+| mediumLimitMultiplier | Y  | 0.8         | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                               |
 | roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
 | showunits     | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                             |
 | unitstr       | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                       |
@@ -156,7 +158,6 @@ currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
 targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
-cols: 3
 hour12: false
 showday: false
 showpast: false
@@ -176,7 +177,6 @@ type: custom:octopus-energy-rates-card
 pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
 currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-cols: 2
 showday: true
 showpast: false
 lowlimit: 20
