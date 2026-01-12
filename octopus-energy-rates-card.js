@@ -192,6 +192,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const combinerate = config.combinerate;
         const multiplier = config.multiplier
         const rateListLimit = config.rateListLimit
+        const navigatorLanguage = (typeof navigator !== 'undefined') ? (navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language) : 'en-US';
+        const language = hass.locale?.language || hass.language || navigatorLanguage || 'en-US';
+        const timeZone = hass.locale?.time_zone || hass.config?.time_zone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const dayFormatter = new Intl.DateTimeFormat(language, { weekday: 'short', timeZone });
+        const timeFormatter = new Intl.DateTimeFormat(language, {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: hour12,
+            hourCycle: hour12 ? 'h12' : 'h23',
+            timeZone: timeZone,
+        });
         var colours = (config.exportrates ? colours_export : colours_import);
         var rates_totalnumber = 0;
         var combinedRates = [];
@@ -288,8 +299,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         combinedRates.forEach(function (key) {
             const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
-            const lang = navigator.language || navigator.languages[0];
-            var current_rates_day = date.toLocaleDateString(lang, { weekday: 'short' });
+            var current_rates_day = dayFormatter.format(date);
             rates_processingRow++;
             var ratesToEvaluate = key.value_inc_vat * multiplier;
 
@@ -330,12 +340,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
         filteredRates.forEach(function (key) {
             const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
-            const lang = navigator.language || navigator.languages[0];
-            var options = { hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute: '2-digit' };
-            // The time formatted in the user's Locale
-            var time_locale = date.toLocaleTimeString(lang, options);
-            // If the showday config option is set, include the shortened weekday name in the user's Locale
-            var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
+            // The time formatted in Home Assistant's timezone (fallback to browser)
+            var time_locale = timeFormatter.format(date);
+            // If the showday config option is set, include the shortened weekday name in Home Assistant's timezone
+            var date_locale = (showday ? dayFormatter.format(date) + ' ' : '');
 
             var colour = colours[1];  // Default to 'green' (index 1) (below low limit above 0)
             var isTargetTime = false;
