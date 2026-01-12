@@ -194,7 +194,24 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const rateListLimit = config.rateListLimit
         const navigatorLanguage = (typeof navigator !== 'undefined') ? (navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language) : 'en-US';
         const language = hass.locale?.language || hass.language || navigatorLanguage || 'en-US';
-        const timeZone = hass.locale?.time_zone || hass.config?.time_zone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const isValidTimeZone = (tz) => {
+            if (!tz) {
+                return false;
+            }
+            try {
+                new Intl.DateTimeFormat(undefined, { timeZone: tz });
+                return true;
+            } catch (_error) {
+                return false;
+            }
+        };
+        const candidateTimeZones = [
+            hass.locale?.time_zone,
+            hass.config?.time_zone,
+            Intl.DateTimeFormat().resolvedOptions().timeZone,
+            'UTC',
+        ];
+        const timeZone = candidateTimeZones.find((tz) => isValidTimeZone(tz));
         const dayFormatter = new Intl.DateTimeFormat(language, { weekday: 'short', timeZone });
         const timeFormatter = new Intl.DateTimeFormat(language, {
             hour: '2-digit',
