@@ -9,114 +9,106 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
             const style = document.createElement('style');
             style.textContent = `
-            table {
+            .time_highlight { font-weight: bold; color: white; }
+            .current { position: relative; }
+            .current:before{ content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0; display: block; border-top: calc(var(--ha-font-size-l) * .65) solid transparent; border-bottom: calc(var(--ha-font-size-l) * .65) solid transparent; border-right: 10px solid; }
+
+            .time_red{ border-bottom: 1px solid Tomato; }
+            .time_orange{ border-bottom: 1px solid orange; }
+            .time_green{ border-bottom: 1px solid MediumSeaGreen; }
+            .time_lightgreen { border-bottom: 1px solid ForestGreen; }
+            .time_blue{ border-bottom: 1px solid #391CD9; }
+            .time_cheapest{ border-bottom: 1px solid LightGreen; }
+            .time_cheapestblue{ border-bottom: 1px solid LightBlue; }
+
+            .red { border: 2px solid Tomato; background-color: Tomato; }
+            .orange { border: 2px solid orange; background-color: orange; }
+            .green { border: 2px solid MediumSeaGreen; background-color: MediumSeaGreen; }
+            .lightgreen { border: 2px solid ForestGreen; background-color: ForestGreen; }
+            .blue { border: 2px solid #391CD9; background-color: #391CD9; }
+            .cheapest { color: black; border: 2px solid LightGreen; background-color: LightGreen; }
+            .cheapestblue { color: black; border: 2px solid LightBlue; background-color: LightBlue; }
+
+            .rates-grid {
+                display: grid;
+                gap: 12px;
                 width: 100%;
-                padding: 0px;
-                spacing: 0px;
+                box-sizing: border-box;
+                align-items: start;
+                grid-auto-rows: auto;
+                overflow: visible;
+                justify-content: start;
+                grid-auto-columns: minmax(130.344px, 1fr);
             }
-            table.sub_table {
-                border-collapse: seperate;
-                border-spacing: 0px 2px;
-            }
-            table.main {
-                padding: 0px;
-            }
-            td.time_highlight {
-                font-weight: bold;
-                color: white;
-            }
-            td.current {
-                position: relative;
-            }    
-            td.current:before{
-                content: "";
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 0; 
-                height: 0; 
+
+            .rates-grid.layout-vertical {
+                /* items flow top-to-bottom until the available height is used, then continue in the next column. */
                 display: block;
-                border-top: calc(var(--ha-font-size-l) * .65) solid transparent;
-                border-bottom: calc(var(--ha-font-size-l) * .65) solid transparent;
+                column-width: 130.344px;
+                column-gap: 12px;
+            }
 
-                border-right: 10px solid;
+            .rates-grid.layout-horizontal {
+                grid-auto-flow: row;
+                justify-content: start;
+                gap: 2px 12px;
             }
-            thead th {
-                text-align: left;
-                padding: 0px;
+
+            .rates-grid.layout-horizontal .rate-row {
+                display: flex;
+                align-items: stretch; /* make children equal height so underline lines up */
+                justify-content: flex-start;
+                gap: 0;
+                padding: 0;
+                box-sizing: border-box;
+                min-width: 0;
+                width: 100%;
+                justify-self: stretch;
             }
-            td {
-                vertical-align: top;
+
+            .rates-grid.layout-vertical .rate-row {
+                display: inline-flex;
+                width: 100%;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0;
+                padding: 0 0 2px 0;
+                box-sizing: border-box;
+            }
+
+            .time {
+                text-align: center;
+                vertical-align: middle;
+                flex: 1 1 auto;
+                padding: 4px 6px;
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                font-size: var(--ha-font-size-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 padding: 2px;
-                spacing: 0px;
+                min-width: 50px;
+                min-height: 40px;
+                box-sizing: border-box;
             }
-            tr.rate_row{
-                text-align:center;
-                width:80px;
-            }
-            td.time {
-                text-align:center;
-                vertical-align: middle;
-            }
-            td.time_red{
-                border-bottom: 1px solid Tomato;
-            }
-            td.time_orange{
-                border-bottom: 1px solid orange;
-            }
-            td.time_green{
-                border-bottom: 1px solid MediumSeaGreen;
-            }
-            td.time_lightgreen {
-                border-bottom: 1px solid ForestGreen;
-            }
-            td.time_blue{
-                border-bottom: 1px solid #391CD9;
-            }
-            td.time_cheapest{
-                border-bottom: 1px solid LightGreen;
-            }
-            td.time_cheapestblue{
-                border-bottom: 1px solid LightBlue;
-            }
-            td.rate {
-                color:white;
-                text-align:center;
-                vertical-align: middle;
-                width:80px;
 
-                border-top-right-radius:15px;
-                border-bottom-right-radius:15px;
-            }
-            td.red {
-                border: 2px solid Tomato;
-                background-color: Tomato;
-            }
-            td.orange {
-                border: 2px solid orange;
-                background-color: orange;
-            }
-            td.green {
-                border: 2px solid MediumSeaGreen;
-                background-color: MediumSeaGreen;
-            }
-            td.lightgreen {
-                border: 2px solid ForestGreen;
-                background-color: ForestGreen;
-            }
-            td.blue {
-                border: 2px solid #391CD9;
-                background-color: #391CD9;
-            }
-            td.cheapest {
-                color: black;
-                border: 2px solid LightGreen;
-                background-color: LightGreen;
-            }
-            td.cheapestblue {
-                color: black;
-                border: 2px solid LightBlue;
-                background-color: LightBlue;
+            .rate {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                text-align: center;
+                vertical-align: middle;
+                flex: 0 0 64px;
+                min-width: 50px;
+                min-height: 40px;
+                border-top-right-radius: 15px;
+                border-bottom-right-radius: 15px;
+                padding: 2px;
+                margin-left: 0;
+                box-sizing: border-box;
             }
             `;
             card.appendChild(style);
@@ -300,9 +292,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
             });
         }
 
-        // This is critical to breaking down the columns properly. For now, there's now
-        // two loops doing the same thing which is not ideal.
-        // TODO: there should be one clear data process loop and one rendering loop? Or a function?
         var rates_list_length = 0;
         var cheapest_rate = 5000;
         var previous_rate = 0;
@@ -347,14 +336,16 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
         });
 
-        const rows_per_col = Math.ceil(rates_list_length / config.cols);
+        var layout = config.layoutOrientation || "vertical";
+        var order = config.layoutOrder || "asc";
 
-        var tables = "";
-        tables = tables.concat("<td><table class='sub_table'><tbody>");
-        var table = ""
-        var x = 1;
+        if (order === "asc") {
+            filteredRates.sort(function(a, b) { return Date.parse(a.start) - Date.parse(b.start); });
+        } else {
+            filteredRates.sort(function(a, b) { return Date.parse(b.start) - Date.parse(a.start); });
+        }
 
-        filteredRates.forEach(function (key) {
+        function renderRateRow(key) {
             const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
             // The time formatted in Home Assistant's timezone (fallback to browser)
@@ -362,39 +353,40 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // If the showday config option is set, include the shortened weekday name in Home Assistant's timezone
             var date_locale = (showday ? dayFormatter.format(date) + ' ' : '');
 
-            var colour = colours[1];  // Default to 'green' (index 1) (below low limit above 0)
+            var colour = colours[1]; // Default to 'green' (index 1) (below low limit above 0)
             var isTargetTime = false;
             var targetTimeBackgroundColor = "";
             var targetTimePrefix = "";
+
             // Check if the current time row corresponds to a target time
             allSlotsTargetTimes.forEach(function (targetTime) {
                 const startTime = new Date(targetTime.start);
                 const endTime = new Date(targetTime.end);
                 if (date >= startTime && date < endTime) {
                     isTargetTime = true;
-                    targetTimeBackgroundColor = "' style='background-color: " + targetTime.color + ";";
+                    targetTimeBackgroundColor = " style='background-color: " + targetTime.color + ";'";
                     targetTimePrefix = targetTime.timePrefix ? targetTimePrefix + targetTime.timePrefix : targetTimePrefix;
                 }
             });
+
             // Check if we've got any variable limits defined which will take precedence
             additionalDynamicLimits.forEach(function (targetLimit) {
                 if (key.value_inc_vat <= targetLimit.limit) {
                     isTargetTime = true;
-                    targetTimeBackgroundColor = "' style='background-color: " + targetLimit.color + ";";
+                    targetTimeBackgroundColor = " style='background-color: " + targetLimit.color + ";'";
                     targetTimePrefix = targetLimit.timePrefix ? targetTimePrefix + targetLimit.timePrefix : targetTimePrefix;
                 }
             });
 
             // Add the extra space at the end of the prefix if it's not empty
-            targetTimePrefix = targetTimePrefix ? targetTimePrefix + " " : targetTimePrefix;
+            targetTimePrefix = targetTimePrefix ? targetTimePrefix + ' ' : targetTimePrefix;
             var isCurrentTime = false;
             if ((date - Date.parse(new Date()) > -1800000) && (date < new Date())) {
                 if (showpast) {
                     isCurrentTime = true;
-                    targetTimeBackgroundColor = "' style='background-color: gray;"; // Apply gray background
-                };
-            };
-
+                    targetTimeBackgroundColor = " style='background-color: gray;'";
+                }
+            }
 
             var valueToDisplay = key.value_inc_vat * multiplier;
             // Apply bold styling if the current time is a target time
@@ -407,31 +399,48 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
             else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
 
-            if (showpast || (date - Date.parse(new Date()) > -1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + date_locale + time_locale +
-                    "</td><td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+            var timeClass = "time " + boldStyle + " time_" + colour;
+            var rateClass = "rate " + colour;
 
-                if (x % rows_per_col == 0) {
-                    tables = tables.concat(table);
-                    table = "";
-                    if (rates_list_length != x) {
-                        tables = tables.concat("</tbody></table></td>");
-                        tables = tables.concat("<td><table class='sub_table'><tbody>");
-                    }
-                };
-                x++;
+            return "<div class='rate-row'>" +
+                "<div class='" + timeClass + "'" + targetTimeBackgroundColor + ">" + targetTimePrefix + date_locale + time_locale + "</div>" +
+                "<div class='" + rateClass + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</div>" +
+                "</div>";
+        }
+
+        // If `cols` is specified, limit the responsive grid to that number of columns
+        var colsSpecified = null;
+        if (this._config.cols != null) {
+            if (!isNaN(this._config.cols)) {
+                colsSpecified = parseInt(this._config.cols);
             }
-        });
-        tables = tables.concat(table);
-        tables = tables.concat("</tbody></table></td>");
+        }
 
-        this.content.innerHTML = `
-        <table class="main">
-            <tr>
-                ${tables}
-            </tr>
-        </table>
-        `;
+        var colStyleAttr = '';
+        if (colsSpecified && colsSpecified > 0) {
+            if (layout === 'horizontal') {
+                if (colsSpecified === 1) {
+                    // Single column should take full width
+                    colStyleAttr = " style='grid-template-columns: 1fr;'";
+                } else {
+                    // For multiple columns, use exact count with minmax that allows shrinking
+                    // Calculate minimum width to ensure all columns fit: container width / cols    
+                    colStyleAttr = " style='grid-template-columns: repeat(" + colsSpecified + ", minmax(max(100px, calc(100% / " + colsSpecified + " - 12px)), 1fr));'";
+                }
+            } else {
+                // For the vertical (multi-column) layout, cap the number of columns
+                colStyleAttr = " style='column-count: " + colsSpecified + ";'";
+            }
+        } else if (layout === 'horizontal') {
+            // Default auto-fill logic when cols is not specified - maximize columns that fit
+            colStyleAttr = " style='grid-template-columns: repeat(auto-fit, minmax(130.344px, 1fr));'";
+        }
+
+        var html = "<div class='rates-grid layout-" + layout + "'" + colStyleAttr + ">";
+        filteredRates.forEach(function (key) { html += renderRateRow(key); });
+        html += "</div>";
+
+        this.content.innerHTML = html;
     }
 
     reverseObject(object) {
@@ -460,8 +469,21 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Additional limits specified in a similar format as targetTimesEntities
             // but they take input_numbers as input
             additionalDynamicLimits: null,
-            // Controls how many columns the rates split in to
-            cols: 1,
+            // 'vertical' fills columns top-to-bottom then left-to-right.
+            // 'horizontal' fills rows left-to-right, wrapping when out of space.
+            // If cols is set to 1 this has no functional difference - both layouts behave the same
+            layoutOrientation: 'vertical',
+            // 'asc' shows most recent rates first, 'desc' shows oldest rates first.
+            layoutOrder: 'asc',
+            // The number of sections within the grid the card will span over, can be 'full' or a number. Each section is 12 columns wide.
+            // Only applies to section based dashboards
+            layoutSections: 1,
+            // The number of columns within the grid the card will span over, can be 'full' or a number. Takes priority over layoutSections
+            // Only applies to section based dashboards
+            layoutColumns: null,
+            // Number of rate columns to show - best used when reducing the number of columns to < 3 and for backwards compatibility with old table based renderer
+            // If greater than the number of columns the container can fit the elements will overflow, using layoutSections/layoutColumns instead is recommended to allow auto fit
+            cols: null,
             // Show rates that already happened in the card
             showpast: false,
             // Show the day of the week with the time
@@ -509,10 +531,30 @@ class OctopusEnergyRatesCard extends HTMLElement {
         this._config = cardConfig;
     }
 
-    // The height of your card. Home Assistant uses this to automatically
-    // distribute all cards over the available columns.
     getCardSize() {
-        return 3;
+        // For simplicity sake this is fixed at 12 units (50px per unit)
+        // This provides a reasonable height layout hint for masonry layouts for the card regardless of number of rates
+        return 12;
+    }
+
+    getGridOptions () {
+        return {
+            columns: (() => {
+                if (this._config.layoutColumns == null && this._config.layoutSections == null && this._config.cols != null && !isNaN(this._config.cols)) {
+                    return 12; // Backwards compatibility with original card size - default was 1 section wide
+                }
+
+                if (this._config.layoutColumns != null) {
+                    return isNaN(this._config.layoutColumns) ? this._config.layoutColumns : Math.max(5, parseInt(this._config.layoutColumns));
+                }
+
+                if (this._config.layoutSections != null) {
+                    return isNaN(this._config.layoutSections) ? this._config.layoutSections : Math.max(1, parseInt(this._config.layoutSections)) * 12;
+                }
+                
+                return 12; // Default to full 12 column (1 section) width if nothing is specified
+            })()
+        }
     }
 }
 
