@@ -27,7 +27,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             td.current {
                 position: relative;
-            }    
+            }
             td.current:before{
                 content: "";
                 position: absolute;
@@ -38,7 +38,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 display: block;
                 border-top: calc(var(--ha-font-size-l) * .65) solid transparent;
                 border-bottom: calc(var(--ha-font-size-l) * .65) solid transparent;
-
                 border-right: 10px solid;
             }
             thead th {
@@ -53,6 +52,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             tr.rate_row{
                 text-align:center;
                 width:80px;
+            }
+            td.target {
+                text-align: right;
+                vertical-align: middle;
             }
             td.time {
                 text-align:center;
@@ -84,7 +87,6 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 text-align:center;
                 vertical-align: middle;
                 width:80px;
-
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
             }
@@ -366,6 +368,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var isTargetTime = false;
             var targetTimeBackgroundColor = "";
             var targetTimePrefix = "";
+            var targetTimeDateTIme = "";
+            var targetTimeRate = "";
             // Check if the current time row corresponds to a target time
             allSlotsTargetTimes.forEach(function (targetTime) {
                 const startTime = new Date(targetTime.start);
@@ -386,7 +390,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             });
 
             // Add the extra space at the end of the prefix if it's not empty
-            targetTimePrefix = targetTimePrefix ? targetTimePrefix + " " : targetTimePrefix;
+            // targetTimePrefix = targetTimePrefix ? targetTimePrefix + " " : targetTimePrefix;
             var isCurrentTime = false;
             if ((date - Date.parse(new Date()) > -1800000) && (date < new Date())) {
                 if (showpast) {
@@ -408,8 +412,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
             else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
 
             if (showpast || (date - Date.parse(new Date()) > -1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + date_locale + time_locale +
-                    "</td><td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
+                targetTimePrefix = "<td class='target " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + "</td>";
+                targetTimeDateTIme = "<td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + date_locale + time_locale + "</td>";
+                targetTimeRate = "<td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td>";
+                table = table.concat("<tr class='rate_row'>" + targetTimePrefix + targetTimeDateTIme + targetTimeRate + "</tr>");
 
                 if (x % rows_per_col == 0) {
                     tables = tables.concat(table);
