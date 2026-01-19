@@ -243,8 +243,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
             const limitExtraData = config.additionalDynamicLimits[entityId] || [];
             const backgroundColour = limitExtraData.backgroundColour || "";
             const timePrefix = limitExtraData.prefix || "";
+            const multiplier = limitExtraData.multiplier || 1;
 
-            const limit = parseFloat(hass.states[entityId].state);
+            const limit = parseFloat(hass.states[entityId].state) * parseFloat(multiplier);
             if (!isNaN(limit)) {
                 additionalDynamicLimits.push({
                     limit: limit,

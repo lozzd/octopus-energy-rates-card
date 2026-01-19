@@ -106,7 +106,7 @@ Here's a breakdown of all the available configuration items:
 | hour12        | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
 | cheapest      | Y        | false         | If true show the cheapest rate in light green / light blue                                                                                           |
 | combinerate   | Y        | false         | If true combine rows where the rate is the same price, useful if you have a daily tracker tarrif for instance                                        |
-| multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds (1)                                                                                                   |
+| multiplier    | Y        | 100           | multiple rate values for pence (100) or pounds for display purposes(1)                                                                                                   |
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                             |
 | cardRefreshIntervalSeconds | Y | 60      | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                              |
 | additionalDynamicLimits | Y | N/A       | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The color specified here takes precedence compared to the one in `targetTimesEntities`. |
@@ -193,6 +193,7 @@ additionalDynamicLimits:
   input_number.threshold_turn_on_air_conditioning:
     backgroundColour: DarkOliveGreen
     prefix: 💰
+    multiplier: 0.01
 targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_2h_rates:
     backgroundColour: orange
@@ -207,6 +208,13 @@ Each entity contains the following optional properties with their default values
 backgroundColour: navy
 prefix:
 ```
+
+The `additionalDynamicLimits` property also supports the `multiplier` entity which is used to multiply the input number or sensor value to convert it to the correct unit for comparison to your rates. The default value is 1 (assumes the input number or sensor is in pounds).
+```
+multiplier: 1
+```
+If your input number or sensor is in pence (i.e. 20p/kWh) while your rates are in pounds (i.e. £0.20/kWh), you may wish your `multiplier` to be 0.01 as in the larger example above.
+
 
 For all possible `backgroundColour` combinations, please have a look at the [valid HTML color names](https://www.w3schools.com/colors/colors_names.asp).
 
