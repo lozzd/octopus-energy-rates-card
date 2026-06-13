@@ -294,10 +294,25 @@ class OctopusEnergyRatesCard extends HTMLElement {
             const futureattributes = this.reverseObject(futurestate.attributes);
             var ratesFuture = futureattributes.rates;
 
-            ratesFuture.forEach(function (key) {
-                combinedRates.push(key);
-                rates_totalnumber++;
-            });
+            // Only include future rates if they are for a genuinely different day than the
+            // current rates. Between midnight and ~4pm, the next_day_rates event may still
+            // hold the previous day's "tomorrow" data (now today), because the Octopus Energy
+            // integration only fires rate events when rates actually change (since v18.1.0).
+            // Comparing the calendar date of the first slot in each set detects this case and
+            // prevents duplicate rates being shown for the same day.
+            const futureStartDay = ratesFuture && ratesFuture.length > 0
+                ? new Date(ratesFuture[0].start).toDateString()
+                : null;
+            const currentStartDay = ratesCurrent && ratesCurrent.length > 0
+                ? new Date(ratesCurrent[0].start).toDateString()
+                : null;
+
+            if (futureStartDay && currentStartDay && futureStartDay !== currentStartDay) {
+                ratesFuture.forEach(function (key) {
+                    combinedRates.push(key);
+                    rates_totalnumber++;
+                });
+            }
         }
 
         // This is critical to breaking down the columns properly. For now, there's now
