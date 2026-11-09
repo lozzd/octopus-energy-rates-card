@@ -58,6 +58,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 text-align:center;
                 vertical-align: middle;
             }
+            td.time_purple{
+                border-bottom: 1px solid RebeccaPurple;
+            }
             td.time_red{
                 border-bottom: 1px solid Tomato;
             }
@@ -87,6 +90,10 @@ class OctopusEnergyRatesCard extends HTMLElement {
 
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
+            }
+            td.purple {
+                border: 2px solid Rebecca Rurple;
+                background-colour: Rebecca Purple;
             }
             td.red {
                 border: 2px solid Tomato;
@@ -170,7 +177,22 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var lowlimit = config.lowlimit;
         var mediumlimit = config.mediumlimit;
         var highlimit = config.highlimit;
-
+        
+        // Optional extra-high threshold: a number or Home Assistant entity ID.
+        // An unset, missing or non-numeric value disables the purple band.
+        let extrahighlimit = null;
+        const extraHighConfig = config.extrahighlimit;
+        if (extraHighConfig !== null && extraHighConfig !== undefined && extraHighConfig !== '') {
+            const entityValue = hass.states[extraHighConfig]?.state;
+            const resolvedValue = entityValue !== undefined ? entityValue : extraHighConfig;
+            const parsedValue = Number(resolvedValue);
+            if (Number.isFinite(parsedValue)) {
+                extrahighlimit = parsedValue;
+            } else {
+                console.warn('Octopus Energy Rates Card: extrahighlimit is not a valid number or entity value');
+            }
+        }
+    
         // Check if we've received a number, if not, assume they are entities
         // and read them from the state
         if (isNaN(lowlimit)) {
@@ -402,6 +424,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
             if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
             else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
+            else if (extrahighlimit !== null && valueToDisplay > extrahighlimit) colour = 'purple'; // optional extra-high band
             else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
             else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
             else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
@@ -471,6 +494,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Controls the title of the card
             title: 'Agile Rates',
             // Colour controls:
+            // If extrahighlimit is configured and the price is above it, the row is purple.
             // If the price is above highlimit, the row is marked red.
             // If the price is above mediumlimit, the row is marked orange.
             // If the price is above lowlimit, the row is marked dark green.
@@ -479,6 +503,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
+            extrahighlimit: null, // Optional numeric value or entity ID; null preserves existing colours.
             // Entity to use for dynamic limits, above are ignored if limitEntity is set. 
             limitEntity: null,
             highLimitMultiplier: 1.1,
