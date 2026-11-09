@@ -59,7 +59,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 vertical-align: middle;
             }
             td.time_purple{
-                border-bottom: 1px solid RebeccaPurple;
+                border-bottom: 1px solid #C000A0;
             }
             td.time_red{
                 border-bottom: 1px solid Tomato;
@@ -92,8 +92,8 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border-bottom-right-radius:15px;
             }
             td.purple {
-                border: 2px solid Rebecca Rurple;
-                background-colour: Rebecca Purple;
+                border: 2px solid #C000A0;
+                background-color: #C000A0;
             }
             td.red {
                 border: 2px solid Tomato;
